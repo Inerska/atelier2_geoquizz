@@ -9,5 +9,5 @@ return function ($container) {
     $entityManager = $container->get(EntityManager::class);
     $schemaTool = new SchemaTool($entityManager);
     $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
-    $schemaTool->createSchema($metadata);
+    $schemaTool->updateSchema($metadata, true);
 };
