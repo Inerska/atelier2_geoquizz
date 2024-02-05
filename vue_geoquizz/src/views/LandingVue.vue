@@ -1,13 +1,11 @@
 <script lang="ts">
 import {RouterView} from 'vue-router'
 import Game from '@/components/Game.vue'
-import HeaderComponent from '@/components/HeaderComponent.vue'
 
 export default {
   components: {
     RouterView,
     Game,
-    HeaderComponent
   },
   data() {
     return {
