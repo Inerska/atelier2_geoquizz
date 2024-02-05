@@ -6,7 +6,7 @@ services:
     image: "directus/directus:latest"
     container_name: "geoquizz_directus"
     env_file:
-      - .env
+      - series.env
     ports:
       - "8055:8055"
     depends_on:
@@ -18,7 +18,7 @@ services:
     image: "postgres:latest"
     container_name: "geoquizz_postgres"
     env_file:
-      - .env
+      - series.env
     volumes:
       - ./data-series:/var/lib/postgresql/data
     ports:
