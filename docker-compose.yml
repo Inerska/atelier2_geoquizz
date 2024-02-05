@@ -1,0 +1,21 @@
+version: "3.8"
+name: "geeoquizz"
+
+services:
+  postgres:
+    image: "postgres:latest"
+    container_name: "geoquizz_postgres"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - geoquizz_net
+
+
+
+netowrks:
+  geoquizz_net:
+    driver: bridge
