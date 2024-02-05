@@ -16,9 +16,17 @@ final class Game
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column(name: 'id', type: 'integer', nullable: false)]
     private int $id;
+
+    #[Column]
     private int $serie_id;
+
+    #[Column]
     private int $level_id;
+
+    #[Column]
     private int $photo_id;
+
+    #[Column]
     private string $status;
 
     /**

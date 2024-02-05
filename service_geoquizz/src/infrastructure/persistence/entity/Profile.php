@@ -19,10 +19,16 @@ final class Profile
     #[Column]
     private int $id;
 
+    #[Column]
     private string $username;
 
+    #[Column]
     private string $email;
+
+    #[Column]
     private string $firstname;
+
+    #[Column]
     private string $lastname;
     #[Column(name: 'actualGame'), OneToOne(targetEntity: 'Game')]
     private Game $actualGame;
