@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use geoquizz\service\web\action\ListGamesAction;
+
 return function ($app) {
     $app->get('/', function ($request, $response, $args) {
         $response->getBody()->write("Hello, world");
@@ -12,4 +14,6 @@ return function ($app) {
         $response->getBody()->write("Hello, $name");
         return $response;
     });
+
+    $app->get('/games', ListGamesAction::class);
 };

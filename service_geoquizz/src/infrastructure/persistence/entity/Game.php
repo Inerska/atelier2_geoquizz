@@ -4,23 +4,19 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
-use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table(name: 'games'), Entity]
+#[Table, Entity]
 final class Game
 {
-    #[Id, Column(name: 'id', type: 'integer')]
+    #[Id, GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
-    #[Column(name: 'serie_id', type: 'integer')]
     private int $serie_id;
-    #[Column(name: 'level_id', type: 'integer')]
     private int $level_id;
-    #[Column(name: 'photo_id', type: 'integer')]
     private int $photo_id;
-    #[Column(name: 'status', type: 'string')]
     private string $status;
 
     /**

@@ -6,24 +6,22 @@ namespace geoquizz\service\infrastructure\persistence\entity;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table(name: 'profiles'), Entity]
+#[Table, Entity]
 final class Profile
 {
-    #[Id, Column(name: 'id', type: 'integer')]
+    #[Id, GeneratedValue(strategy: 'IDENTITY')]
     private int $id;
 
-    #[Column(name: 'username', type: 'string')]
     private string $username;
 
-    #[Column(name: 'email', type: 'string')]
     private string $email;
-    #[Column(name: 'firstname', type: 'string')]
     private string $firstname;
-    #[Column(name: 'lastname', type: 'string')]
     private string $lastname;
     #[Column(name: 'actualGame'), OneToOne(targetEntity: 'Game')]
     private Game $actualGame;
