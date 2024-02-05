@@ -1,11 +1,5 @@
-FROM nginx:alpine
+FROM nginx:latest
 
-RUN rm /etc/nginx/conf.d/default.conf
-
-COPY nginx.conf /etc/nginx/nginx.conf
-
-COPY conf.d/ /etc/nginx/conf.d/
-
-EXPOSE 80 443
+COPY ./reverse.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]
