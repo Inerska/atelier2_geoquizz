@@ -26,4 +26,8 @@
         "symfony/yaml": "^5.4",
         "symfony/cache": "^5.4"
     }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    }
 }

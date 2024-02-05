@@ -16,8 +16,8 @@ return function ($container) {
         return $logger;
     });
 
-    $container->set('em', function () {
-        $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/../src/infrastructure/entity'], true);
+    $container->set(EntityManager::class, function () {
+        $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/../src/infrastructure/persistence/entity'], true);
         try {
             $connectionConfiguration = parse_ini_file('database.conf.ini');
             $connection = DriverManager::getConnection($connectionConfiguration);
@@ -26,7 +26,7 @@ return function ($container) {
                 throw new Exception('Connection is null');
             }
 
-            return new EntityManager($connection, $connectionConfiguration);
+            return new EntityManager($connection, $config);
         } catch (Exception $e) {
             echo $e->getMessage();
         }
