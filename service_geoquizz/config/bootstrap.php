@@ -20,7 +20,7 @@ $container->set('logger', function () {
 
 $app = AppFactory::createFromContainer($container);
 
-(require __DIR__ . '/routes.php')($app);
+(require_once __DIR__ . '/routes.php')($app);
 
 $app->addErrorMiddleware(true, true, true, $container->get('logger'));
 
