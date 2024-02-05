@@ -4,7 +4,7 @@
       <router-link to="/" class="logo">Geoquizz</router-link>
       <nav class="nav">
         <ul>
-          <li><router-link to="/connexion">Accueil</router-link></li>
+          <li><router-link to="/">Accueil</router-link></li>
           <li><router-link to="/jouer">Jouer</router-link></li>
           <li><router-link to="/profil">Profil</router-link></li> <!-- @TODO : Cacher si déconnecté lorsque l'authentification sera géré -->
           <li><router-link to="/connexion">Connexion</router-link></li> <!-- @TODO : Modifier par Déconnexion lorsque l'authentification sera géré -->
