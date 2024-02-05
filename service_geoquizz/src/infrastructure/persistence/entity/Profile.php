@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping\Table;
 final class Profile
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
+    #[Column]
     private int $id;
 
     private string $username;

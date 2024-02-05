@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
+use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
@@ -13,6 +14,7 @@ use Doctrine\ORM\Mapping\Table;
 final class Game
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
+    #[Column(name: 'id', type: 'integer', nullable: false)]
     private int $id;
     private int $serie_id;
     private int $level_id;

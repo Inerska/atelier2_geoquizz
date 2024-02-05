@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace geoquizz\service\web\action;
+namespace geoquizz\service\infrastructure\action;
 
-use Slim\Psr7\Request;
-use Slim\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractAction
 {
-    abstract public function __invoke(Request $request, Response $response, $args): Response;
+    abstract public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface;
 }

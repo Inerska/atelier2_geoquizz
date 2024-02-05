@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use geoquizz\service\web\action\ListGamesAction;
 
-return function ($app) {
+return static function ($app) {
     $app->get('/', function ($request, $response, $args) {
         $response->getBody()->write("Hello, world");
         return $response;
