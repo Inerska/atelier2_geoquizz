@@ -16,7 +16,6 @@ return function ($container) {
         return $logger;
     });
 
-    // add doctrine entity manager
     $container->set('em', function () {
         $config = ORMSetup::createAttributeMetadataConfiguration([__DIR__ . '/../src/infrastructure/entity'], true);
         try {
