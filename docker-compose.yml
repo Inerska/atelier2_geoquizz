@@ -69,14 +69,11 @@ services:
       dockerfile: Dockerfile
     container_name: "gateway_nginx"
     ports:
-      - "8084:8084"
+      - "8084:80"
     networks:
       - geoquizz_net
     volumes:
-      - ./gateway_nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./gateway_nginx/conf.d:/etc/nginx/conf.d
-      #depends_on:
-      #- auth_slim
+      - ./gateway_nginx/reverse.conf:/etc/nginx/conf.d/default.conf
 
 networks:
   geoquizz_net:
