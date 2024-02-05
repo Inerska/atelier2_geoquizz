@@ -113,6 +113,25 @@ services:
     networks:
       - geoquizz_net
 
+  gateway_nginx:
+    build:
+      context: gateway_nginx
+      dockerfile: Dockerfile
+    container_name: "gateway_nginx"
+    env_file:
+      - .env
+    ports:
+      - "8084:8084"
+    networks:
+      - geoquizz_net
+    volumes:
+      - ./gateway_nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./gateway_nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - geoquizz_slim
+      - auth_slim
+      - websocket_node
+
 networks:
   geoquizz_net:
     driver: bridge
