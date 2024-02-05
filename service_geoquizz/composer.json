@@ -1,0 +1,26 @@
+{
+    "name": "geoquizz/service_geoquizz",
+    "description": "API Restful GeoQuizz",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "geoquizz\\service\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexis Chân Gridel",
+            "email": "alexis.gridel@pm.me"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.6",
+        "php-di/php-di": "^6.4.0",
+        "php-di/slim-bridge": "^3.2",
+        "illuminate/database":"^9.0",
+        "monolog/monolog": "^3.5.0"
+    }
+}

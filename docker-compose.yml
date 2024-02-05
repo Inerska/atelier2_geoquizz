@@ -43,8 +43,8 @@ services:
     env_file:
       - geoquizz.env
     volumes:
-      - ./service.geoquizz/public:/var/www/html
-      - ./service.geoquizz:/var/www
+      - ./service_geoquizz/public:/var/www/html
+      - ./service_geoquizz:/var/www
     working_dir: /var/www
     depends_on:
       - service_geoquizz_postgres
