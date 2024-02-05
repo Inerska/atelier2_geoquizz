@@ -26,43 +26,45 @@ services:
     networks:
       - geoquizz_net
 
-  geoquizz_slim:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: "geoquizz_slim"
-    env_file:
-      - .env
-    ports:
-      - "8080:8080"
-    depends_on:
-      - geoquizz_postgres
-    networks:
-      - geoquizz_net
+ # geoquizz_slim:
+  #  build:
+ #     context: .
+ #     dockerfile: Dockerfile
+ #   container_name: "geoquizz_slim"
+ #   env_file:
+ #     - .env
+ #   ports:
+  #    - "8080:8080"
+  #  depends_on:
+  #  - geoquizz_postgres
+  #  networks:
+  #    - geoquizz_net
 
-  geoquizz_postgres:
-    image: "postgres:latest"
-    container_name: "geoquizz_postgres"
-    env_file:
-      - .env
-    volumes:
-      - ./data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - geoquizz_net
+  #geoquizz_postgres:
+  #  image: "postgres:latest"
+  #  container_name: "geoquizz_postgres"
+  #  env_file:
+  #    - .env
+  #  volumes:
+  #    - ./data:/var/lib/postgresql/data
+  #  ports:
+  #    - "5432:5432"
+   # networks:
+   #   - geoquizz_net
 
   auth_slim:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: "canals/php:8.2"
     container_name: "auth_slim"
     env_file:
       - .env
     ports:
-      - "8081:8081"
+      - "8081:80"
+    volumes:
+      - ./auth_geoquizz/public:/var/www/html
+      - ./auth_geoquizz:/var/www
+    working_dir: /var/www
     depends_on:
-      - geoquizz_postgres
+      - auth_postgres
     networks:
       - geoquizz_net
 
@@ -78,40 +80,40 @@ services:
     networks:
       - geoquizz_net
 
-  websocket_node:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: "websocket_node"
-    env_file:
-      - .env
-    ports:
-      - "8082:8082"
-    depends_on:
-      - geoquizz_postgres
-    networks:
-      - geoquizz_net
+  #websocket_node:
+  #  build:
+   #   context: .
+  #    dockerfile: Dockerfile
+  #  container_name: "websocket_node"
+  #  env_file:
+  #   - .env
+  #  ports:
+  #    - "8082:8082"
+  #  depends_on:
+  #    - geoquizz_postgres
+  #  networks:
+  #    - geoquizz_net
 
-  rabbitmq:
-    image: "rabbitmq:3-management"
-    container_name: "rabbitmq"
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    networks:
-      - geoquizz_net
+  #rabbitmq:
+  #  image: "rabbitmq:3-management"
+  #  container_name: "rabbitmq"
+  #  ports:
+  #    - "15672:15672"
+  #  - "5672:5672"
+  #  networks:
+  #    - geoquizz_net
 
-  front_vue:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: "front_vue"
-    env_file:
-      - .env
-    ports:
-      - "8083:8083"
-    networks:
-      - geoquizz_net
+  #front_vue:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile
+  #  container_name: "front_vue"
+  #  env_file:
+  #    - .env
+  #  ports:
+  #    - "8083:8083"
+  #  networks:
+  #    - geoquizz_net
 
   gateway_nginx:
     build:
@@ -128,9 +130,7 @@ services:
       - ./gateway_nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./gateway_nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-      - geoquizz_slim
       - auth_slim
-      - websocket_node
 
 networks:
   geoquizz_net:
