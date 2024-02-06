@@ -38,6 +38,7 @@ export default {
   color: white;
   border-radius: 7px;
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 8px 24px;
 }
 
 .game-card-img {
