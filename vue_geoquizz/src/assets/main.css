@@ -1,0 +1,9 @@
+body {
+    min-height: 100vh;
+    /*rgb(58,38,84)*/
+    /*rgb(95,62,106)*/
+    background: linear-gradient(to top right, rgb(26,25,45), rgb(25, 8, 37)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    color: white;
+    margin: 0;
+    font-family: Inter, sans-serif;
+}

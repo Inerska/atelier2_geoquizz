@@ -1,4 +1,5 @@
 <script lang="ts">
+
 export default {
   props: {
     serie: {
@@ -11,20 +12,70 @@ export default {
     },
     photo: {
       type: String,
-      required: true
+      required: false,
+      default: "/public/img/Nancy.jpg"
     }
   }
-
 }
 </script>
 
 <template>
   <div class="game-card">
-    <img :src="photo" alt="photo" />
-    <div class="card-body">
-      <p class="card-text">Partie sur {{serie}}</p>
-      <p class="card-text">Niveau {{level}}</p>
+    <img class="game-card-img" :src="photo" alt="photo de la ville">
+    <div class="game-gard-text">
+      <img v-if="level === 'easy'" class="level" src="/public/icons/easy.svg" alt="easy">
+      <img v-if="level === 'medium'" class="level" src="/public/icons/medium.svg" alt="medium">
+      <img v-if="level === 'hard'" class="level" src="/public/icons/hard.svg" alt="hard">
+      <div class="serie">{{ serie }}</div>
     </div>
   </div>
 
 </template>
+
+<style scoped>
+
+.game-card {
+  color: white;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.game-card-img {
+  width: 100%;
+  height: 10em;
+  object-fit: cover;
+  transform: scale(1.1);
+  filter: blur(1px) brightness(80%);
+  transition: transform 0.5s, filter 0.5s;
+  cursor: pointer;
+}
+
+.game-card-img:hover {
+  filter: blur(1px) brightness(60%);
+  transform: scale(1.2);
+}
+
+.game-gard-text {
+  position: relative;
+  z-index: 100;
+  top: -2.3em;
+  height: 0;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  padding-right: 1.2em;
+  padding-left: 1.2em;
+  justify-content: space-between;
+}
+
+.serie {
+  font-size: 1.4em;
+  height: 1.2em;
+  font-weight: bold
+}
+
+.level {
+  height: 1.3em;
+}
+
+</style>
