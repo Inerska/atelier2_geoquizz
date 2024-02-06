@@ -14,7 +14,7 @@ return static function ($app) {
     $app->get('/games[/]', ListGamesAction::class);
 
     $app->get('/games/{id}[/]', GetGameAction::class);
-
+  
     $app->put('/games/{id}[/]', UpdateGameAction::class);
 
     $app->post('/games[/]', CreateGameAction::class);
