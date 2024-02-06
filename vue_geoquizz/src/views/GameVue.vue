@@ -71,6 +71,10 @@ export default defineComponent({
 
 <style>
 
+body {
+  margin: 0 !important;
+  overflow: hidden;
+}
 .confirm {
   position: absolute;
   bottom: 20px;
