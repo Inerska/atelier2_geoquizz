@@ -1,12 +1,10 @@
 <script lang="ts">
-import {RouterView} from 'vue-router'
 import Game from '@/components/Game.vue'
 
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
 export default {
   components: {
-    RouterView,
     Game,
   },
   data() {
