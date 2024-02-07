@@ -47,24 +47,17 @@ export default {
     }
   },
   created() {
-    this.$api.get('series').then((resp) => {
-      this.seriesList = resp.data.data
-    }).catch((err) => {
-      console.log(err)
-    })
+    fetch('/service_geoquizz/games')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
 
-    this.$api.get('levels').then((resp) => {
-      this.levelsList = resp.data.data
-    }).catch((err) => {
-      console.log(err)
-    })
-
-    /*this.$api.get("http://service_geoquizz/games").then((resp) => {
-      console.log(resp.data.data)
-      this.gamesList = resp.data.data
-    }).catch((err) => {
-      console.log(err)
-    })*/
+    fetch('/service_series/levels')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
   },
   methods: {
     createGame() {
@@ -76,7 +69,7 @@ export default {
 
 <template>
   <div>le header!</div>
-  <h1 class="test">SALUUUUT</h1>
+  <h1 class="test">slft</h1>
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
     <h3>Et si tu challengais ta culture géographique ?</h3>

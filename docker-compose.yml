@@ -69,13 +69,15 @@ services:
       dockerfile: Dockerfile
     container_name: "vue_geoquizz"
     ports:
-      - "3001:80"
+      - "80:80"
     volumes:
-      - ./vue_geoquizz/dist:/usr/local/apache2/htdocs
       - /app/node_modules
+      - ./vue_geoquizz:/app
     working_dir: /app
     networks:
       - geoquizz_net
+    depends_on:
+      - gateway_nginx
 
   gateway_nginx:
     build:
@@ -88,6 +90,9 @@ services:
       - geoquizz_net
     volumes:
       - ./gateway_nginx/reverse.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - service_geoquizz
+      - series_directus
 
 networks:
   geoquizz_net:

@@ -13,7 +13,7 @@ export default {
     photo: {
       type: String,
       required: false,
-      default: "/public/img/Nancy.jpg"
+      default: "/img/Nancy.jpg"
     }
   }
 }
