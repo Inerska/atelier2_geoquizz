@@ -65,8 +65,8 @@ services:
 
   vue_geoquizz:
     build:
-        context: vue_geoquizz
-        dockerfile: Dockerfile
+      context: vue_geoquizz
+      dockerfile: Dockerfile
     container_name: "vue_geoquizz"
     ports:
       - "3000:8000"
@@ -90,6 +90,30 @@ services:
       - geoquizz_net
     volumes:
       - ./gateway_nginx/reverse.conf:/etc/nginx/conf.d/default.conf
+
+  auth_geoquizz:
+    image: "canals/php:8.2"
+    container_name: "auth_geoquizz"
+    env_file:
+      - auth.env
+    volumes:
+      - ./auth_geoquizz/public:/var/www/html
+      - ./auth_geoquizz:/var/www
+    working_dir: /var/www
+    ports:
+      - "8081:80"
+    depends_on:
+      - auth_postgres
+    networks:
+      - geoquizz_net
+
+  auth_postgres:
+    image: "postgres:latest"
+    container_name: "auth_postgres"
+    env_file:
+      - auth.env
+    volumes:
+      - ./data-auth:/var/lib
 
 networks:
   geoquizz_net:
