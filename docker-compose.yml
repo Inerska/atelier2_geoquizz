@@ -63,6 +63,20 @@ services:
     networks:
       - geoquizz_net
 
+  vue_geoquizz:
+    build:
+        context: vue_geoquizz
+        dockerfile: Dockerfile
+    container_name: "vue_geoquizz"
+    ports:
+      - "3000:8000"
+    volumes:
+      - ./vue_geoquizz:/app
+      - /app/node_modules
+    working_dir: /app
+    networks:
+      - geoquizz_net
+
   gateway_nginx:
     build:
       context: gateway_nginx
