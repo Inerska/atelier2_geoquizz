@@ -21,6 +21,7 @@
   </div>
 </template>
 <script lang="ts">
+import { ws } from './../utils/WebSocketService'
 import { defineComponent, onMounted, ref } from 'vue'
 import * as L from 'leaflet'
 
@@ -65,7 +66,13 @@ export default defineComponent({
 
     return { imageUrl, currentMarker, confirmMarker }
   },
-  methods: {}
+  methods: {
+    onSubmit: function () {
+      console.log('submit')
+      ws.sendMessage('newGame')
+
+    }
+  }
 })
 </script>
 
