@@ -6,7 +6,7 @@
     crossorigin=""
   />
   <div class="container">
-    <img src="./../assets/img/Nancy.jpg" alt="Image dynamique" class="dynamic-image" />
+    <img src="/img/Nancy.jpg" alt="Image dynamique" class="dynamic-image" />
     <div id="map" class="map-container"></div>
   </div>
   <div class="confirm">
