@@ -1,11 +1,14 @@
 <script lang="ts">
 import Game from '@/components/Game.vue'
-
+import HeaderComponent from '@/components/HeaderComponent.vue';
+import FooterComponent from '@/components/FooterComponent.vue';
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
 export default {
   components: {
     Game,
+    HeaderComponent,
+    FooterComponent
   },
   data() {
     return {
@@ -43,7 +46,7 @@ export default {
 </script>
 
 <template>
-  <div>le header!</div>
+  <HeaderComponent />
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
     <h3>Alexis à toi de trouver le sous-titre</h3>
@@ -65,7 +68,7 @@ export default {
   </div>
   <div class="current-game">
     <div class="current-game-card">
-      <img class="current-game-img" src="/img/nyc.jpg" alt="NYC"/>
+      <img class="current-game-img" src="/img/Nancy.jpg" alt="NYC"/>
       <div class="current-game-button-1"> MONTPELLIER</div>
       <div class="current-game-button-2"> Continuer la partie</div>
     </div>
@@ -77,7 +80,7 @@ export default {
       <Game class="card" v-for="game in publicGames" :serie="game.serie" :level="game.level"/>
     </div>
   </div>
-
+  <FooterComponent />
 </template>
 
 <style scoped>

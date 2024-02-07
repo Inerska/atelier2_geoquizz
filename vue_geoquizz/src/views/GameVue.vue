@@ -25,10 +25,12 @@ import { ws } from './../utils/WebSocketService'
 import { defineComponent, onMounted, ref } from 'vue'
 import * as L from 'leaflet'
 
+
 export default defineComponent({
   setup() {
+
     const imageUrl = ref('')
-    const currentMarker = ref<L.Marker | null>(null) // Utiliser ref pour une réactivité
+    const currentMarker = ref<L.Marker | null>(null)
     const initialCenter = [48.693623, 6.183672] as L.LatLngExpression
     const originalPosition = [48.6939657285046, 6.183735251033795] as L.LatLngExpression
 
@@ -44,16 +46,16 @@ export default defineComponent({
         if (currentMarker.value) {
           map.removeLayer(currentMarker.value as any)
         }
-          currentMarker.value = L.marker(e.latlng).addTo(map)
-                calculateAndDisplayDistance(e.latlng);
-
+        currentMarker.value = L.marker(e.latlng).addTo(map)
+        calculateAndDisplayDistance(e.latlng)
       })
     })
+    
 
     // Méthode pour gérer la confirmation du marqueur
     const confirmMarker = () => {
       if (currentMarker.value) {
-        console.log('Marqueur confirmé à :', currentMarker.value.getLatLng())        
+        console.log('Marqueur confirmé à :', currentMarker.value.getLatLng())
         // Ici, vous pouvez ajouter d'autres logiques, comme envoyer les coordonnées à un serveur
       }
     }
@@ -77,7 +79,6 @@ export default defineComponent({
 </script>
 
 <style>
-
 body {
   margin: 0 !important;
   overflow: hidden;

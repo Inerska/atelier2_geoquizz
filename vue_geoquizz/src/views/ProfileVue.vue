@@ -2,7 +2,7 @@
   <HeaderComponent />
   <div class="container">
     <div class="banner">
-      <img class="img" src="./../assets/img/Nancy.jpg" alt="banner" />
+      <img class="img" src="/img/Nancy.jpg" alt="banner" />
       <div class="gradient-overlay"></div>
       <div class="user">
         <img class="avatar" src="/avatar.svg" />
