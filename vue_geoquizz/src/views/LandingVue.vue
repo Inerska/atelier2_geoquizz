@@ -9,7 +9,13 @@ export default {
   },
   data() {
     return {
+      gamesList: [],
       seriesList: [],
+      levelsList: [],
+      newGame: {
+        serie_id: "",
+        level_id: ""
+      },
       publicGames: {
         game1: {
           serie: "Paris",
@@ -35,9 +41,21 @@ export default {
     }
   },
   created() {
-    this.$api.get('series').then((resp) => {
+    this.$api.get('http://series_directus/items/series').then((resp) => {
+      this.seriesList = resp.data.data
+    }).catch((err) => {
+      console.log(err)
+    })
 
+    this.$api.get('levels').then((resp) => {
+      this.levelsList = resp.data.data
+    }).catch((err) => {
+      console.log(err)
+    })
+
+    this.$api.get("http://service_geoquizz/games").then((resp) => {
       console.log(resp.data.data)
+      this.gamesList = resp.data.data
     }).catch((err) => {
       console.log(err)
     })
@@ -52,21 +70,18 @@ export default {
 
 <template>
   <div>le header!</div>
+  <RouterLink to="/test">testtest</RouterLink>
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
-    <h3>Alexis à toi de trouver le sous-titre</h3>
+    <h3>Et si tu challengais ta culture géographique ?</h3>
     <div class="new-game-banner">
-      <select>
+      <select v-model="newGame.serie_id">
         <option value="" selected disabled>Choisir une ville</option>
-        <option value="Paris">Paris</option>
-        <option value="Montpellier">Montpellier</option>
-        <option value="Nancy">Nancy</option>
+        <option v-for="serie in seriesList" :key="serie.id" :value="serie.id">{{ serie.city }}</option>
       </select>
-      <select>
+      <select v-model="newGame.level_id">
         <option value="" selected disabled>Choisir un niveau</option>
-        <option value="easy">Facile</option>
-        <option value="medium">Moyen</option>
-        <option value="hard">Difficile</option>
+        <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
       </select>
       <button class="new-game-button">Lancer</button>
     </div>
@@ -88,7 +103,16 @@ export default {
 
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+
+h3 {
+  font-size: 1.2em;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  margin: 0;
+  padding-bottom: 1em;
+  font-weight: 400;
+}
 
 .new-game {
   text-align: center;
@@ -99,15 +123,6 @@ h2 {
   margin: 0;
   font-size: 2em;
   padding: .2em;
-}
-
-h3 {
-  font-size: 1.5em;
-  color: rgba(255, 255, 255, 0.3);
-  text-align: center;
-  margin: 0;
-  padding-bottom: 1em;
-  font-weight: 400;
 }
 
 .new-game-banner {
