@@ -9,7 +9,7 @@ export default {
   },
   data() {
     return {
-
+      seriesList: [],
       publicGames: {
         game1: {
           serie: "Paris",
@@ -33,6 +33,14 @@ export default {
         }
       }
     }
+  },
+  created() {
+    this.$api.get('series').then((resp) => {
+
+      console.log(resp.data.data)
+    }).catch((err) => {
+      console.log(err)
+    })
   },
   methods: {
     createGame() {
