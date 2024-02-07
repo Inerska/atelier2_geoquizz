@@ -1,34 +1,38 @@
 import {createRouter, createWebHistory} from 'vue-router'
+import LandingVue from "@/views/LandingVue.vue";
+import SerieVue from "@/views/SerieVue.vue";
+import ProfileVue from "@/views/ProfileVue.vue";
+import LoginVue from "@/views/LoginVue.vue";
+import GameVue from "@/views/GameVue.vue";
 
 const router = createRouter({
-    // @ts-ignore : this is a bug in the typescript definition
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
             name: 'landing',
-            component: import('../views/LandingVue.vue')
+            component: LandingVue
         },
         {
             path: '/jeu',
             name: 'game',
-            component: import('../views/GameVue.vue')
+            component: GameVue
         },
         {
             path: '/connexion',
             name: 'login',
-            component: import('../views/LoginVue.vue')
+            component: LoginVue
         },
         {
             path: '/profil',
             name: 'profile',
-            component: import('../views/ProfileVue.vue')
+            component: ProfileVue
         },
         {
             path: '/serie/:id',
             name: 'serie',
-            component: import('../views/SerieVue.vue')
-        }
+            component: SerieVue
+        },
     ]
 })
 

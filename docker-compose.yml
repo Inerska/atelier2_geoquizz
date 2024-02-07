@@ -64,12 +64,15 @@ services:
       - geoquizz_net
 
   vue_geoquizz:
-    image: "httpd:latest"
+    build:
+      context: vue_geoquizz
+      dockerfile: Dockerfile
     container_name: "vue_geoquizz"
     ports:
       - "3001:80"
     volumes:
-        - ./vue_geoquizz/dist:/usr/local/apache2/htdocs
+      - ./vue_geoquizz/dist:/usr/local/apache2/htdocs
+      - /app/node_modules
     working_dir: /app
     networks:
       - geoquizz_net

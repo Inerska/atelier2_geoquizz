@@ -76,6 +76,7 @@ export default {
 
 <template>
   <div>le header!</div>
+  <h1 class="test">SALUUUUT</h1>
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
     <h3>Et si tu challengais ta culture géographique ?</h3>
@@ -84,11 +85,11 @@ export default {
     </div>
     <div class="new-game-banner">
       <select v-model="newGame.serie_id">
-        <option value="" selected disabled>Choisir une ville</option>
+        <option disabled selected value="">Choisir une ville</option>
         <option v-for="serie in seriesList" :key="serie.id" :value="serie.id">{{ serie.city }}</option>
       </select>
       <select v-model="newGame.level_id">
-        <option value="" selected disabled>Choisir un niveau</option>
+        <option disabled selected value="">Choisir un niveau</option>
         <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
       </select>
       <button class="new-game-button">Lancer</button>
@@ -96,7 +97,7 @@ export default {
   </div>
   <div class="current-game">
     <div class="current-game-card">
-      <img class="current-game-img" src="/img/nyc.jpg" alt="NYC"/>
+      <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
       <div class="current-game-button-1"> MONTPELLIER</div>
       <div class="current-game-button-2"> Continuer la partie</div>
     </div>
@@ -105,28 +106,34 @@ export default {
   <div class="all-series">
     <div class="title">
       <h2>Villes à jouer</h2>
-      <Tooltip width="25" desc="Découvre les parties publiques sur une ville !"/>
+      <Tooltip desc="Découvre les parties publiques sur une ville !" width="25"/>
     </div>
     <div class="series-cards">
-      <button class="serie-card" v-for="serie in seriesList" :key="serie.id">{{ serie.city }}</button>
+      <button v-for="serie in seriesList" :key="serie.id" class="serie-card">{{ serie.city }}</button>
     </div>
   </div>
 
   <div class="public-games">
     <div class="title">
       <h2>Parties publiques</h2>
-      <Tooltip width="27" desc="Découvre les parties créées par d'autres joueurs !"/>
+      <Tooltip desc="Découvre les parties créées par d'autres joueurs !" width="27"/>
     </div>
     <div class="public-games-cards">
-      <Game class="card" v-for="game in publicGames" :link="game.id" :serie="game.serie" :level="game.level"/>
+      <Game v-for="game in publicGames" :level="game.level" :link="game.id" :serie="game.serie" class="card"/>
     </div>
   </div>
 
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 $offwhite: darken(white, 10%);
-$darkblue: rgb(57,56,91);
+$darkblue: rgb(57, 56, 91);
+
+.test {
+  font-size: 5rem;
+  color: red;
+}
+
 .series-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(5em, 1fr));

@@ -35,15 +35,13 @@ export default {
   </div>
 </template>
 <style lang="scss">
-$color-mid: rgb(51 65 85);
-
 .iconDiv {
   height: 2rem;
   width: 2rem;
   margin-top: 1em;
   margin-bottom: 1em;
   margin-left: 1em;
-  padding: .3em;
+  padding: 0.3em;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
@@ -51,24 +49,30 @@ $color-mid: rgb(51 65 85);
   overflow: hidden;
   cursor: pointer;
   transition: width 300ms ease-in-out 0s, background-color 300ms linear 200ms;
-  &:hover, &:focus-visible {
-    width: var(--width);
-    background-color: $color-mid;
-    transition: width 300ms ease-in-out 0s, background-color 100ms linear 0s;
-  }
-  &:focus-visible {
-    outline: 1px solid $color-mid;
-    outline-offset: 4px;
-  }
-  &:active {
-    opacity: 0.9;
-  }
-  &::after {
-    content: attr(tooltip);
-    margin-left: 1em;
-    animation: fadeIn 600ms linear forwards;
-  }
 }
+
+.iconDiv:hover,
+.iconDiv:focus-visible {
+  width: var(--width);
+  background-color: rgb(51 65 85);
+  transition: width 300ms ease-in-out 0s, background-color 100ms linear 0s;
+}
+
+.iconDiv:focus-visible {
+  outline: 1px solid rgb(51 65 85);
+  outline-offset: 4px;
+}
+
+.iconDiv:active {
+  opacity: 0.9;
+}
+
+.iconDiv::after {
+  content: attr(tooltip);
+  margin-left: 1em;
+  animation: fadeIn 600ms linear forwards;
+}
+
 .iconSVG {
   height: 2em;
   aspect-ratio: 1 / 1;
@@ -88,5 +92,6 @@ $color-mid: rgb(51 65 85);
     opacity: 1;
   }
 }
+
 
 </style>
