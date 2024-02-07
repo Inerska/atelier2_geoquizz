@@ -6,8 +6,10 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use geoquizz\auth\domain\service\AuthenticationServiceInterface;
+use geoquizz\auth\domain\service\RequestBodyValidatorServiceInterface;
 use geoquizz\auth\domain\service\TokenManagementServiceInterface;
 use geoquizz\auth\infrastructure\service\AuthenticationService;
+use geoquizz\auth\infrastructure\service\RequestBodyValidatorService;
 use geoquizz\auth\infrastructure\service\TokenManagementService;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -43,8 +45,12 @@ return function ($container) {
         );
     });
 
+    $container->set(RequestBodyValidatorServiceInterface::class, function () use ($container) {
+        return new RequestBodyValidatorService();
+    });
+
     $container->set(TokenManagementServiceInterface::class, function () use ($container){
-        return new TokenManagementService();
+        return new TokenManagementService($container->get('em'));
     });
 
 

@@ -10,28 +10,56 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
+/**
+ * Class Account
+ */
 #[Table]
 #[Entity]
 class Account
 {
 
+    /**
+     * @var int $id
+     */
     #[Id]
     #[GeneratedValue(strategy: 'AUTO')]
     #[Column]
     private int $id;
 
+    /**
+     * @var string $mail
+     */
     #[Column]
     private string $mail;
 
+    /**
+     * @var string $password
+     */
     #[Column]
     private string $password;
 
+    /**
+     * @var string $accessToken
+     */
     #[Column]
     private string $accessToken;
 
+    /**
+     * @var string $refreshToken
+     */
     #[Column]
     private string $refreshToken;
 
+    public function __construct(string $mail, string $password)
+    {
+        $this->mail = $mail;
+        $this->password = $password;
+    }
+
+    /**
+     * @param $property string
+     * @return null | mixed
+     */
     public function __get($property)
     {
         if (property_exists($this, $property)) {
@@ -40,6 +68,11 @@ class Account
         return null;
     }
 
+    /**
+     * @param $property string
+     * @param $value mixed
+     * @return void
+     */
     public function __set($property, $value)
     {
         if (property_exists($this, $property)) {
