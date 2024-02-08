@@ -25,6 +25,7 @@
 .container {
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
   align-items: center;
   width: 100%;
 }
@@ -32,7 +33,7 @@
 .logo {
   font-size: 24px;
   font-weight: bold;
-  color: #000;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -50,7 +51,7 @@
 }
 
 .nav ul li a {
-  color: #000;
+  color: #ffffff;
   text-decoration: none;
 }
 
