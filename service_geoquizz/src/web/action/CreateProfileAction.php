@@ -36,7 +36,7 @@ final class CreateProfileAction extends AbstractAction
             return $response->withStatus(500);
         }
 
-        $response->getBody()->write(json_encode(['success' => 'Profile created successfully'], JSON_THROW_ON_ERROR));
+        $response->getBody()->write(json_encode(['id' => $profile->getId()], JSON_THROW_ON_ERROR));
         return $response
             ->withStatus(201)
             ->withHeader('Content-Type', 'application/json');
