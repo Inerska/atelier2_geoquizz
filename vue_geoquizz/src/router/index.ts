@@ -6,6 +6,7 @@ import LoginVue from "@/views/LoginVue.vue";
 import GameVue from "@/views/GameVue.vue";
 
 const router = createRouter({
+    //@ts-ignore
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {

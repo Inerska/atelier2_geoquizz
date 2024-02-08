@@ -4,6 +4,7 @@ import Tooltip from '@/components/Tooltip.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import { ws } from '@/utils/WebSocketService'
+import CreateGameComponent from "@/components/CreateGameComponent.vue";
 import axios from 'axios'
 
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
@@ -16,7 +17,13 @@ export default {
   data() {
     return {
       gamesList: [],
-      seriesList: [],
+      //seriesList: [],
+      seriesList: [
+        { id: 1, city: "Nancy" },
+        { id: 2, city: "Metz" },
+        { id: 3, city: "Paris" },
+        { id: 4, city: "Strasbourg" }
+      ],
       levelsList: [],
       newGame: {
         serie_id: "",
@@ -59,10 +66,18 @@ export default {
       .catch((error) => {
         console.log(error)
       })
+    fetch('/service_series/serie')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
   },
   methods: {
     createGame() {
       console.log('createGame')
+    },
+    linkSerie(id) {
+      this.$router.push("/serie/" + id)
     }
   },
   mounted() {
@@ -105,7 +120,7 @@ export default {
       <Tooltip desc="Découvre les parties publiques sur une ville !" width="25"/>
     </div>
     <div class="series-cards">
-      <button v-for="serie in seriesList" :key="serie.id" class="serie-card">{{ serie.city }}</button>
+      <button v-for="serie in seriesList" @click="linkSerie(serie.id)" :key="serie.id" class="serie-card">{{ serie.city }}</button>
     </div>
   </div>
 
@@ -220,16 +235,31 @@ $darkblue: rgb(57, 56, 91);
     float: right;
     font-size: 1.2em;
     font-weight: 300;
-
-    .current-game-button-1 {
-      top: -3.5em;
-      font-weight: bold;
-    }
-
-    .current-game-button-2 {
-      top: -2em;
-    }
   }
+  .current-game-button-1 {
+    top: -3.5em;
+    font-weight: bold;
+  }
+
+  .current-game-button-2 {
+    top: -2em;
+  }
+}
+
+
+h2 {
+  margin: 0;
+  font-size: 2.5em;
+  padding: .2em;
+}
+
+h3 {
+  font-size: 1.2em;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  margin: 0;
+  padding-bottom: 1em;
+  font-weight: 400;
 }
 
 .all-series {
@@ -242,12 +272,6 @@ $darkblue: rgb(57, 56, 91);
     justify-content: start;
     align-items: center;
     margin-bottom: 1em;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: 2.5em;
-    padding: .2em;
   }
 
   .series-cards {
@@ -351,5 +375,12 @@ $darkblue: rgb(57, 56, 91);
     column-gap: 2em;
     row-gap: 1em;
   }
+}
+
+.public-games, .current-game, .all-series {
+  padding-top: 2em;
+  padding-right: 2em;
+  padding-left: 2em;
+
 }
 </style>
