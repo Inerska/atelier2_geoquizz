@@ -35,3 +35,13 @@ export type CurrentGame = {
     serie: Serie;
     advancements: Photo[];
 }
+export type User = {
+    id: number;
+    username: string;
+    email: string;
+    avatar: string;
+    totalScore: number;
+    gamesPlayed: number;
+    accessToken: string;
+    refreshToken: string;
+}
