@@ -2,8 +2,9 @@
   <div class="login-page">
     <HeaderComponent />
     <div class="login-container">
-      <form class="login-form" @submit.prevent="onSubmit">
-        <h2>Connexion</h2>
+      <div class="login-form">
+        <h2>Inscription</h2>
+        `<div v-if="errorMessage" class="error">{{errorMessage}}</div>
         <div class="form-group">
           <input v-model="mail" type="email" id="email" placeholder=" " required />
           <label for="email">Email</label>
@@ -12,9 +13,12 @@
           <input v-model="password" type="password" id="password" placeholder=" " required />
           <label for="password">Mot de passe</label>
         </div>
-        <button @click="connection()" class="login-button">Se connecter</button>
-        <div class="register"><RouterLink to="/inscription">Pas encore de compte ? Inscrivez-vous</RouterLink></div>
-      </form>
+        <div class="form-group">
+          <input v-model="password2" type="password" id="password" placeholder=" " required />
+          <label for="password">Confirmer le mot de passe</label>
+        </div>
+        <button @click="register()" class="login-button">S'inscrire</button>
+      </div>
     </div>
     <FooterComponent />
   </div>
@@ -33,33 +37,40 @@ export default {
     return {
       mail : "",
       password : "",
-      errorMessage : ""
+      password2 : "",
+      errorMessage : null
     }
   },
   methods: {
-    connection() {
-      console.log('Connexion !')
-      this.$api.post('/login', {
+    register() {
+      console.log('Inscription !')
+      this.$api.post('/register', {
         mail: this.mail,
-        password: this.password
+        password: this.password,
+        confirm_password: this.password2
       }).then(resp => {
+        this.errorMessage = null;
         console.log(resp.data)
+        this.$router.push('/')
       }).catch (err => {
         console.log(err.response.data)
+        this.errorMessage = err.response.data.message
       })
     }
   }
 }
 </script>
 
-<style scoped>
-.register {
-  font-size: .8em;
-  text-align: center;
-  color: grey;
-  text-decoration: underline;
-}
+<style scoped lang="scss">
 
+.error {
+  color: black;
+  background-color: lighten(red, 30%);
+  padding: 1em;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
 .form-group {
   position: relative;
   margin-bottom: 20px;

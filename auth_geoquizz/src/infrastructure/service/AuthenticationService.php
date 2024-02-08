@@ -85,6 +85,10 @@ final class AuthenticationService implements AuthenticationServiceInterface
             throw new AuthenticationException('Account with this mail already exist', 409);
         }
 
+        if ($credential->password != $credential->confirmPassword) {
+            throw new AuthenticationException('Les deux mots de passe ne sont pas pareils', 400);
+        }
+
         $hashedPassword = password_hash($credential->password, PASSWORD_ARGON2ID);
         $account = new Account($credential->mail, $hashedPassword);
 

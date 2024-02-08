@@ -1,55 +1,42 @@
 <script>
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
-
+import HeaderComponent from "@/components/HeaderComponent.vue";
 export default {
   components: {
-    Game
+    Game,
+    HeaderComponent
   },
   data() {
     return {
       //game: null,
-      serie: {
-        id: 1,
-        city: "Nancy",
-        cityCenter: [48.6937223,6.1834097],
-        photo: "/img/Nancy.jpg"
-      },
+      serie: [],
       levelsList: [],
       gamesList: [],
       newGame: {
         serie_id: "",
+        level_id: "",
+
       }
     }
   },
-  /*  beforeRouteEnter(to, from, next) {
-      //get le public game avec l'id
-      this.$api.get("games/" + to.params.id).then(resp => {
-        next(vm => {
-          vm.game = resp.data
-          // récup la première photo pr l'afficher dans la vue
-          this.newGame.serie_id = this.serie.id
-        })
-      })
-    },*/
   created() {
-    /*this.$api.get('levels').then((resp) => {
+    this.$api.get('/levels').then(resp => {
       this.levelsList = resp.data.data
-    }).catch((err) => {
-      console.log(err)
-    })*/
+    })
+    this.$api.get('/series/' + this.$route.params.id ).then(resp => {
+      this.serie = resp.data.data
+      const map = L.map('map').setView(this.serie.cityCenter.split(","), 13).setMinZoom(12)
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+            'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map)
+
+      map.dragging.disable();
+      map.zoomControl.disable();
+    })
     //get les public games qui sont sur la serie là et les afficher et les stocker dans gamesList
-  },
-  mounted() {
-    const map = L.map('map').setView(this.serie.cityCenter, 13).setMinZoom(12)
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map)
-
-    map.dragging.disable()
-    map.zoomControl.disable()
   },
   methods: {
     createGame() {
@@ -60,6 +47,7 @@ export default {
 </script>
 
 <template>
+  <HeaderComponent/>
   <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -100,6 +88,7 @@ export default {
   flex-direction: row;
   justify-content: space-between;
   align-items: start;
+  gap: 2em;
   .title {
     display: flex;
     align-items: center;
@@ -122,8 +111,8 @@ export default {
 
 #map {
   flex-shrink: 2;
-  height: 22em;
   width: 50em;
+  height: 30em;
 }
 
 .new-game-banner {
@@ -139,7 +128,7 @@ export default {
   gap: 1em;
   justify-content: center;
   align-items: center;
-  margin-bottom:1em;
+  margin-bottom: 1em;
 
   select {
     appearance: none;

@@ -20,13 +20,7 @@ export default {
   data() {
     return {
       gamesList: [],
-      //seriesList: [],
-      seriesList: [
-        { id: 1, city: "Nancy" },
-        { id: 2, city: "Metz" },
-        { id: 3, city: "Paris" },
-        { id: 4, city: "Strasbourg" }
-      ],
+      seriesList: [],
       levelsList: [],
       newGame: {
         serie_id: "",
@@ -61,19 +55,16 @@ export default {
     }
   },
   created() {
-    ws.connect('ws://localhost:5200')
-
     this.$api.get('/series')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
+        .then(resp => {
+          this.seriesList = resp.data.data
         })
 
     this.$api.get('/levels')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
+        .then(resp => {
+          this.levelsList = resp.data.data
         })
+
   },
   methods: {
     createGame() {
