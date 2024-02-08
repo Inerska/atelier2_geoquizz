@@ -4,8 +4,8 @@ import Tooltip from '@/components/Tooltip.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import { ws } from '@/utils/WebSocketService'
-import CreateGameComponent from "@/components/CreateGameComponent.vue";
-import axios from 'axios'
+// import CreateGameComponent from "@/components/CreateGameComponent.vue";
+// import axios from 'axios'
 
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
