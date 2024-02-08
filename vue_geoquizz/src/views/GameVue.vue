@@ -62,11 +62,10 @@ export default defineComponent({
     roundNumber.value += 1
 
     const map = ref(null)
-
-    onMounted(() => {
       ws.connect('ws://localhost:5200')
 
-      ws.sendMessage('newGame')
+    onMounted(() => {
+
 
       map.value = L.map('map').setView(initialCenter.value, 13).setMinZoom(12)
 
@@ -81,6 +80,8 @@ export default defineComponent({
         }
         currentMarker.value = L.marker(e.latlng).addTo(map.value)
       })
+      ws.sendMessage('newGame')
+
     })
 
     const nextRound = () => {
@@ -169,8 +170,8 @@ export default defineComponent({
 body {
   margin: 0 !important;
 }
-p {
-  color: black;
+p, span {
+  color: black !important;
 }
 .button-next {
   background-color: aliceblue;
