@@ -1,3 +1,6 @@
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 class WebSocketService {
     private ws: WebSocket | null = null;
     private url: string = '';
@@ -12,18 +15,32 @@ class WebSocketService {
 
         this.ws.onopen = () => {
             console.log('Connexion WebSocket établie.');
+            toast.success('Connexion WebSocket établie.', {
+                autoClose: 3000,
+                position: 'bottom-right'
+            });
         };
 
         this.ws.onerror = (error) => {
             console.error('Erreur WebSocket:', error);
 
+            toast.error(`Erreur WebSocket. Tentative de reconnexion... ${this.reconnectAttempts}/${this.maxReconnectAttempts}`, {
+                autoClose: 3000,
+                position: 'bottom-right'
+            });
             this.tryReconnect();
         };
 
         this.ws.onmessage = (event) => {
             console.log('Message reçu:', event.data);
             if (event.data === 'newGame') {
-                console.log('Nouvelle partie');
+                toast.info("Quelqu'un a lancé une partie !", {
+                    autoClose: 3000,
+                    closeButton: true,
+                    theme: 'light',
+                    pauseOnHover: false,
+                    position: 'bottom-right'
+                });
             }
         };
 
