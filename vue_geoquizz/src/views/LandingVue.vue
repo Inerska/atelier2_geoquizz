@@ -1,6 +1,9 @@
 <script lang="ts">
 import Game from '@/components/Game.vue'
 import Tooltip from '@/components/Tooltip.vue'
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import { ws } from '@/utils/WebSocketService'
 
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
@@ -61,8 +64,11 @@ export default {
   },
   methods: {
     createGame() {
-      console.log("createGame")
+      console.log('createGame')
     }
+  },
+  mounted() {
+    ws.connect("ws://localhost:5200")
   }
 }
 </script>
@@ -348,5 +354,4 @@ $darkblue: rgb(57, 56, 91);
     row-gap: 1em;
   }
 }
-
 </style>
