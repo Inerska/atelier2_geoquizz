@@ -1,3 +1,4 @@
+Nv v
 <script>
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
@@ -35,6 +36,7 @@ export default {
 
       map.dragging.disable();
       map.zoomControl.disable();
+      map.scrollWheelZoom.disable()
     })
     //get les public games qui sont sur la serie là et les afficher et les stocker dans gamesList
   },
@@ -54,42 +56,47 @@ export default {
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
   />
-  <div class="new-game">
-    <div class="new-game-header">
-      <div class="title">
-        <img src="/icons/map-pin.svg"/>
-        <h1>{{ serie.city }}</h1>
+  <div class="game-header">
+    <div class="new-game">
+      <div class="new-game-header">
+        <div class="title">
+          <img src="/icons/map-pin.svg"/>
+          <h1>{{ serie.city }}</h1>
+        </div>
+        <h2>Créer une partie sur cette ville :</h2>
+        <div class="new-game-banner">
+          <select v-model="newGame.serie_id">
+            <option value="" selected disabled>Choisir un niveau</option>
+            <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
+          </select>
+          <button class="new-game-button">Lancer</button>
+        </div>
+        <div class="info">
+          Dans GeoQuizz, tu devras localiser des lieux sur une carte à partir d'images !
+        </div>
       </div>
-      <h2>Créer une partie sur cette ville :</h2>
-      <div class="new-game-banner">
-        <select v-model="newGame.serie_id">
-          <option value="" selected disabled>Choisir un niveau</option>
-          <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
-        </select>
-        <button class="new-game-button">Lancer</button>
-      </div>
-      <div class="info">
-        Dans GeoQuizz, tu devras localiser des lieux sur une carte à partir d'images !
-      </div>
+      <div id="map"></div>
     </div>
-    <div id="map"></div>
+    <div class="public-games">
+      <Game v-for="game in gamesList" :level="game.level" :link="game.id" :serie="game.serie" class="card"/>
+    </div>
   </div>
-  <div class="public-games">
-    <Game v-for="game in gamesList" :level="game.level" :link="game.id" :serie="game.serie" class="card"/>
-  </div>
+
 
 </template>
 
 <style scoped lang="scss">
 .new-game {
-  padding: 5em;
+  padding: 0em; //5em;
   display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
+  flex-direction: column; //row;
   justify-content: space-between;
   align-items: start;
-  gap: 2em;
+  gap: 1em; //2em;
   .title {
+    width: fit-content;
+    margin-left: auto; //0;
+    margin-right: auto; //0;
     display: flex;
     align-items: center;
     gap: .5em;
@@ -104,14 +111,17 @@ export default {
   }
 
   h2 {
+    text-align: center;
+    width: 80vw; //0;
+    margin-left: auto; //0;
+    margin-right: auto; //0;
     font-size: 1.2em;
     font-weight: 300;
   }
 }
 
 #map {
-  flex-shrink: 2;
-  width: 50em;
+  width: 100vw;
   height: 30em;
 }
 
@@ -119,9 +129,8 @@ export default {
   color: black;
   background-color: rgba(26, 26, 45, 0.42);
   border: 1px solid rgb(57, 56, 91);
-  border-radius: 1rem;
-  width: fit-content;
-
+  border-radius: 0; //1rem;
+  //width: fit-content;
   padding: 1.5em;
   display: flex;
   flex-direction: row;
@@ -165,11 +174,13 @@ export default {
   padding: 1em;
   margin-bottom: 1.5em;
   text-align: center;
+  width: 100vw;
   background-color: rgb(51 65 85);
-  border-radius: 8px;
-  width: fit-content;
+  border-radius: 0px; //8px;
+  //width: fit-content;
   margin-left: auto;
   margin-right: auto;
 }
+
 
 </style>
