@@ -37,6 +37,10 @@ export default {
 </script>
 
 <style scoped>
+h2,
+label {
+  color: #333 !important;
+}
 .form-group {
   position: relative;
   margin-bottom: 20px;
@@ -57,7 +61,7 @@ export default {
   position: absolute;
   top: 12px;
   left: 10px;
-  color: #999;
+  color: #000000;
   transition: all 0.2s ease;
   background-color: white;
   padding: 0 5px;
