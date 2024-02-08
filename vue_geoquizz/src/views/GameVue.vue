@@ -168,9 +168,6 @@ export default defineComponent({
 <style>
 body {
   margin: 0 !important;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  max-height: 100%;
 }
 .button-next {
   background-color: aliceblue;
