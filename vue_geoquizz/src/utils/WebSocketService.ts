@@ -16,7 +16,10 @@ class WebSocketService {
         this.ws.onopen = () => {
             console.log('Connexion WebSocket établie.');
             toast.success('Connexion WebSocket établie.', {
-                autoClose: 3000,
+                autoClose: 2000,
+                closeButton: true,
+                theme: 'light',
+                pauseOnHover: false,
                 position: 'bottom-right'
             });
         };
@@ -52,6 +55,7 @@ class WebSocketService {
     sendMessage(message: string) {
         console.log('Envoi de message:', message);
         if (this.ws?.readyState === WebSocket.OPEN) {
+            console.log('WebSocket est connecté. Envoi du message.')
             this.ws.send(message);
         } else {
             console.error('WebSocket n\'est pas connecté.');
@@ -65,8 +69,15 @@ class WebSocketService {
             return;
         }
 
-        if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
-            console.log('WebSocket est déjà connecté ou en cours de connexion.');
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
+
+        if (this.ws && (this.ws.readyState === WebSocket.CONNECTING)) {
+            console.log('WebSocket est en cours de connexion.');
+            setTimeout(() => {
+                if (callback) {
+                    callback();
+                }
+            }, this.reconnectInterval);
             return;
         }
 
