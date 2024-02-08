@@ -7,8 +7,8 @@ export default {
             //baseURL : 'http://localhost:8084/api/v1/',
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin' : '*',
-                scheme: 'http',
+                //'Access-Control-Allow-Origin' : '*',
+                //scheme: 'http',
             }
         })
     }
