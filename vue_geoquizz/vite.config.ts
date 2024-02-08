@@ -15,10 +15,10 @@ export default defineConfig({
             usePolling: true
         },
         proxy: {
-            '/gateway': 'http://gateway_nginx:80',
-            '/service_geoquizz': 'http://service_geoquizz:80',
-            '/service_auth': 'http://auth_geoquizz:80',
-            '/service_directus': 'http://series_directus'
+            '^/gateway': {
+                target: 'http://gateway_nginx:80',
+                rewrite: path => path.replace(/^\/gateway/, ''),
+            },
         }
     },
     resolve: {

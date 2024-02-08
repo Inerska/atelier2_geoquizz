@@ -93,6 +93,7 @@ services:
     depends_on:
       - service_geoquizz
       - series_directus
+      - auth_geoquizz
 
   auth_geoquizz:
     image: "canals/php:8.2"
@@ -117,6 +118,8 @@ services:
       - auth.env
     volumes:
       - ./data-auth:/var/lib
+    networks:
+      - geoquizz_net
 
 networks:
   geoquizz_net:

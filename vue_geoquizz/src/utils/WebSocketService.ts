@@ -1,5 +1,3 @@
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
 
 class WebSocketService {
     private ws: WebSocket | null = null;
@@ -11,20 +9,14 @@ class WebSocketService {
 
         this.ws.onopen = () => {
             console.log('Connexion WebSocket établie.');
-            toast.success('Connexion WebSocket établie.', {
-                autoClose: 3000,
-                position: 'bottom-right'
-            });
+
             // Vous pouvez activer l'envoi de message automatique ici si besoin
             // this.sendMessage('Votre message');
         };
 
         this.ws.onerror = (error) => {
             console.error('Erreur WebSocket:', error);
-            toast.error('Erreur WebSocket. Tentative de reconnexion...', {
-                autoClose: 3000,
-                position: 'bottom-right'
-            });
+
             // Tentative de reconnexion
             setTimeout(() => this.reconnect(), 5000);
         };
@@ -32,22 +24,13 @@ class WebSocketService {
         this.ws.onmessage = (event) => {
             console.log('Message reçu:', event.data);
             if (event.data === 'newGame') {
-                toast.info("Quelqu'un a lancé une partie !", {
-                    autoClose: 3000,
-                    closeButton: true,
-                    theme: 'light',
-                    pauseOnHover: false,
-                    position: 'bottom-right'
-                });
+
             }
         };
 
         this.ws.onclose = () => {
             console.log('Connexion WebSocket fermée. Tentative de reconnexion...');
-            toast.warn('Connexion WebSocket fermée. Tentative de reconnexion...', {
-                autoClose: 3000,
-                position: 'bottom-right'
-            });
+
             // Tentative de reconnexion
             setTimeout(() => this.reconnect(), 5000);
         };

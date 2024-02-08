@@ -52,13 +52,11 @@ export default {
   },
   created() {
 
-    fetch('/service_auth/api/v1/login', {
-      method: 'POST'
-    })
-      .then(response => {
-        console.log(response.data)
+    this.$api.post('/login')
+      .then((response) => {
+        console.log(response)
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error)
       })
   },
