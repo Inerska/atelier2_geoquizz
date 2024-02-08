@@ -1,5 +1,6 @@
 <script lang="ts">
 import Game from '@/components/Game.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import { ws } from '@/utils/WebSocketService'
@@ -9,38 +10,57 @@ import { ws } from '@/utils/WebSocketService'
 export default {
   components: {
     Game,
-    HeaderComponent,
-    FooterComponent
+    Tooltip
   },
   data() {
     return {
+      gamesList: [],
+      seriesList: [],
+      levelsList: [],
+      newGame: {
+        serie_id: "",
+        level_id: ""
+      },
       publicGames: {
         game1: {
           id: 1,
-          serie: 'Paris',
-          level: 'easy',
-          photo: '../assets/img/Nancy.jpg'
+          serie: "Paris",
+          level: "easy",
+          photo: "../assets/img/Nancy.jpg"
         },
         game2: {
           id: 2,
-          serie: 'Montpellier',
-          level: 'medium',
-          photo: ''
+          serie: "Montpellier",
+          level: "medium",
+          photo: ""
         },
         game3: {
           id: 3,
-          serie: 'Nancy',
-          level: 'hard',
-          photo: ''
+          serie: "Nancy",
+          level: "hard",
+          photo: ""
         },
         game4: {
           id: 4,
-          serie: 'Nancy',
-          level: 'easy',
-          photo: ''
+          serie: "Nancy",
+          level: "easy",
+          photo: ""
         }
       }
     }
+  },
+  created() {
+    fetch('/service_geoquizz/games')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
+
+    fetch('/service_series/levels')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
   },
   methods: {
     createGame() {
@@ -54,68 +74,75 @@ export default {
 </script>
 
 <template>
-  <HeaderComponent />
+  <div>le header!</div>
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
-    <h3>Alexis à toi de trouver le sous-titre</h3>
+    <h3>Et si tu challengais ta culture géographique ?</h3>
+    <div class="info">
+      Dans GeoQuizz, tu devras localiser des lieux sur une carte à partir d'images !
+    </div>
     <div class="new-game-banner">
-      <select>
-        <option value="" selected disabled>Choisir une ville</option>
-        <option value="Paris">Paris</option>
-        <option value="Montpellier">Montpellier</option>
-        <option value="Nancy">Nancy</option>
+      <select v-model="newGame.serie_id">
+        <option disabled selected value="">Choisir une ville</option>
+        <option v-for="serie in seriesList" :key="serie.id" :value="serie.id">{{ serie.city }}</option>
       </select>
-      <select>
-        <option value="" selected disabled>Choisir un niveau</option>
-        <option value="easy">Facile</option>
-        <option value="medium">Moyen</option>
-        <option value="hard">Difficile</option>
+      <select v-model="newGame.level_id">
+        <option disabled selected value="">Choisir un niveau</option>
+        <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
       </select>
       <button class="new-game-button">Lancer</button>
     </div>
   </div>
   <div class="current-game">
     <div class="current-game-card">
-      <img class="current-game-img" src="/img/Nancy.jpg" alt="NYC" />
-      <div class="current-game-button-1">MONTPELLIER</div>
-      <div class="current-game-button-2">Continuer la partie</div>
+      <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
+      <div class="current-game-button-1"> MONTPELLIER</div>
+      <div class="current-game-button-2"> Continuer la partie</div>
+    </div>
+  </div>
+
+  <div class="all-series">
+    <div class="title">
+      <h2>Villes à jouer</h2>
+      <Tooltip desc="Découvre les parties publiques sur une ville !" width="25"/>
+    </div>
+    <div class="series-cards">
+      <button v-for="serie in seriesList" :key="serie.id" class="serie-card">{{ serie.city }}</button>
     </div>
   </div>
 
   <div class="public-games">
-    <h2>Parties publiques</h2>
+    <div class="title">
+      <h2>Parties publiques</h2>
+      <Tooltip desc="Découvre les parties créées par d'autres joueurs !" width="27"/>
+    </div>
     <div class="public-games-cards">
-      <Game
-        class="card"
-        v-for="game in publicGames"
-        :key="game.id"
-        :serie="game.serie"
-        :level="game.level"
-      />
+      <Game v-for="game in publicGames" :level="game.level" :link="game.id" :serie="game.serie" class="card"/>
     </div>
   </div>
-  <FooterComponent />
+
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+$offwhite: darken(white, 10%);
+$darkblue: rgb(57, 56, 91);
+
 .new-game {
   text-align: center;
   color: white;
-}
 
-h2 {
-  margin: 0;
-  font-size: 2em;
-  padding: 0.2em;
-}
-
-h3 {
-  font-size: 1.5em;
-  color: rgba(255, 255, 255, 0.3);
-  text-align: center;
-  margin: 0;
-  padding-bottom: 1em;
-  font-weight: 400;
+  .info {
+    color: white;
+    font-size: 1em;
+    padding: 1em;
+    margin-bottom: 1.5em;
+    text-align: center;
+    background-color: rgb(51 65 85);
+    border-radius: 8px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .new-game-banner {
@@ -131,34 +158,34 @@ h3 {
   gap: 1em;
   justify-content: center;
   align-items: center;
-}
 
-select {
-  appearance: none;
-  line-height: 2;
-  font-size: 1.1rem;
-  padding: 0 3em 0 1em;
-  background-color: #fff;
-  border: 1px solid #caced1;
-  border-radius: 0.5rem;
-  color: black;
-  cursor: pointer;
-}
+  select {
+    appearance: none;
+    line-height: 2;
+    font-size: 1.1rem;
+    padding: 0 3em 0 1em;
+    background-color: #fff;
+    border: 1px solid #caced1;
+    border-radius: .5rem;
+    color: black;
+    cursor: pointer;
+  }
 
-.new-game-button {
-  font-size: 1.2em;
-  cursor: pointer;
-  background-color: rgb(29, 25, 41);
-  color: white;
-  border: none;
-  border-radius: 1rem;
-  padding: 0.5em 1.5em;
-  transition: 0.8s;
-}
+  .new-game-button {
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: rgb(29, 25, 41);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    padding: .5em 1.5em;
+    transition: 0.8s;
 
-.new-game-button:hover {
-  background-color: rgb(18, 16, 24);
-  transition: 0.8s;
+    &:hover {
+      background-color: rgb(18, 16, 24);
+      transition: 0.8s;
+    }
+  }
 }
 
 .current-game-card {
@@ -169,56 +196,162 @@ select {
   width: 20em;
   height: 10em;
   cursor: pointer;
+
+  .current-game-img {
+    object-fit: cover;
+    filter: blur(1px) brightness(0.5);
+    transition: 0.4s;
+    width: 100%;
+    height: 10em;
+    transform: scale(1.1);
+    cursor: pointer;
+
+    &:hover {
+      object-fit: cover;
+      filter: blur(1px) brightness(0.4);
+      transform: scale(1.2);
+      transition: 0.4s;
+    }
+  }
+
+  .current-game-button-1, .current-game-button-2 {
+    position: relative;
+    z-index: 100;
+    right: 1em;
+    height: 0;
+    float: right;
+    font-size: 1.2em;
+    font-weight: 300;
+
+    .current-game-button-1 {
+      top: -3.5em;
+      font-weight: bold;
+    }
+
+    .current-game-button-2 {
+      top: -2em;
+    }
+  }
 }
 
-.current-game-img {
-  object-fit: cover;
-  filter: blur(1px) brightness(0.5);
-  transition: 0.4s;
-  width: 100%;
-  height: 10em;
-  transform: scale(1.1);
-  cursor: pointer;
-}
-
-.current-game-img:hover {
-  object-fit: cover;
-  filter: blur(1px) brightness(0.4);
-  transform: scale(1.2);
-  transition: 0.4s;
-}
-
-.current-game-button-1,
-.current-game-button-2 {
-  position: relative;
-  z-index: 100;
-  right: 1em;
-  height: 0;
-  float: right;
-  font-size: 1.2em;
-  font-weight: 300;
-}
-
-.current-game-button-1 {
-  top: -3.5em;
-  font-weight: bold;
-}
-
-.current-game-button-2 {
-  top: -2em;
-}
-
-.public-games,
-.current-game {
+.all-series {
   padding-top: 2em;
   padding-right: 2em;
   padding-left: 2em;
+
+  .title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 2.5em;
+    padding: .2em;
+  }
+
+  .series-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5em, 1fr));
+    column-gap: 2em;
+    row-gap: 1em;
+
+    button {
+      text-transform: uppercase;
+      position: relative;
+      font-size: 18px;
+      transition: color 0.5s, transform 0.2s, background-color 0.2s;
+      outline: none;
+      border-radius: 3px;
+      margin: 0 10px;
+      padding: 23px 33px;
+      border: 3px solid transparent;
+
+      &:active {
+        transform: translateY(3px);
+      }
+
+      &::after, &::before {
+        border-radius: 3px;
+      }
+
+      .material-bubble {
+        background-color: transparent;
+        color: darken($offwhite, 10%);
+        border: none;
+        overflow: hidden;
+        box-shadow: none;
+
+        &:hover {
+          color: $offwhite;
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 2px solid darken($offwhite, 10%);
+          transition: opacity 0.3s, border 0.3s;
+        }
+
+        &:hover::before {
+          opacity: 0;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 200px;
+          height: 200px;
+          background-color: lighten($darkblue, 10%);
+          border-color: transparent;
+          border-radius: 50%;
+          transform: translate(-10px, -70px) scale(0.1);
+          opacity: 0;
+          z-index: -1;
+          transition: transform 0.3s, opacity 0.3s, background-color 0.3s;
+        }
+
+        &:hover::after {
+          opacity: 1;
+          transform-origin: 100px 100px;
+          transform: scale(1) translate(-10px, -70px);
+        }
+      }
+    }
+  }
 }
 
-.public-games-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13em, 1fr));
-  column-gap: 2em;
-  row-gap: 1em;
+.public-games {
+  padding-top: 2em;
+  padding-right: 2em;
+  padding-left: 2em;
+
+  .title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1em;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 2.5em;
+    padding: .2em;
+  }
+
+  .public-games-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13em, 1fr));
+    column-gap: 2em;
+    row-gap: 1em;
+  }
 }
 </style>

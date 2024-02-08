@@ -13,7 +13,7 @@ export default {
     photo: {
       type: String,
       required: false,
-      default: "/public/img/Nancy.jpg"
+      default: "/img/Nancy.jpg"
     }
   }
 }
@@ -23,9 +23,9 @@ export default {
   <div class="game-card">
     <img class="game-card-img" :src="photo" alt="photo de la ville">
     <div class="game-gard-text">
-      <img v-if="level === 'easy'" class="level" src="/public/icons/easy.svg" alt="easy">
-      <img v-if="level === 'medium'" class="level" src="/public/icons/medium.svg" alt="medium">
-      <img v-if="level === 'hard'" class="level" src="/public/icons/hard.svg" alt="hard">
+      <img v-if="level === 'easy'" class="level" src="/icons/easy.svg" alt="easy">
+      <img v-if="level === 'medium'" class="level" src="/icons/medium.svg" alt="medium">
+      <img v-if="level === 'hard'" class="level" src="/icons/hard.svg" alt="hard">
       <div class="serie">{{ serie }}</div>
     </div>
   </div>
