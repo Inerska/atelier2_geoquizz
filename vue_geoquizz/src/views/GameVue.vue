@@ -165,7 +165,10 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style>
+body {
+  margin: 0 !important;
+}
 .button-next {
   background-color: aliceblue;
   width: 100px;

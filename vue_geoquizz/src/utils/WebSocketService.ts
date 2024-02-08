@@ -1,40 +1,51 @@
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
-import { toast } from "vue3-toastify"
-import 'vue3-toastify/dist/index.css'
 class WebSocketService {
     private ws: WebSocket | null = null;
     private url: string = '';
+    private reconnectAttempts: number = 1;
+    private maxReconnectAttempts: number = 3;
+    private reconnectInterval: number = 5000; // Délai entre les tentatives de reconnexion en millisecondes
 
     connect(url: string) {
         this.url = url;
+
         this.ws = new WebSocket(url);
 
         this.ws.onopen = () => {
             console.log('Connexion WebSocket établie.');
-
-            // Vous pouvez activer l'envoi de message automatique ici si besoin
-            // this.sendMessage('Votre message');
+            toast.success('Connexion WebSocket établie.', {
+                autoClose: 3000,
+                position: 'bottom-right'
+            });
         };
 
         this.ws.onerror = (error) => {
             console.error('Erreur WebSocket:', error);
 
-            // Tentative de reconnexion
-            setTimeout(() => this.reconnect(), 5000);
+            toast.error(`Erreur WebSocket. Tentative de reconnexion... ${this.reconnectAttempts}/${this.maxReconnectAttempts}`, {
+                autoClose: 3000,
+                position: 'bottom-right'
+            });
+            this.tryReconnect();
         };
 
         this.ws.onmessage = (event) => {
             console.log('Message reçu:', event.data);
             if (event.data === 'newGame') {
-
+                toast.info("Quelqu'un a lancé une partie !", {
+                    autoClose: 3000,
+                    closeButton: true,
+                    theme: 'light',
+                    pauseOnHover: false,
+                    position: 'bottom-right'
+                });
             }
         };
 
         this.ws.onclose = () => {
             console.log('Connexion WebSocket fermée. Tentative de reconnexion...');
-
-            // Tentative de reconnexion
-            setTimeout(() => this.reconnect(), 5000);
         };
     }
 
@@ -44,33 +55,30 @@ class WebSocketService {
             this.ws.send(message);
         } else {
             console.error('WebSocket n\'est pas connecté.');
-            // Tentative de reconnexion avant de renvoyer le message
-            this.reconnect(() => this.sendMessage(message));
+            this.tryReconnect(() => this.sendMessage(message));
         }
     }
 
-    // Fonction pour gérer la reconnexion
-    private reconnect(callback?: () => void) {
-        if (!this.url) return;
-
-        // Vérifie si WebSocket est déjà en train de se connecter ou est déjà ouvert
-        if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
-            console.log('WebSocket est déjà connecté ou en cours de connexion.');
-            
-            if (callback) {
-                setTimeout(callback, 1000); // Attend un peu pour s'assurer que la connexion est établie
-            }
+    private tryReconnect(callback?: () => void) {
+        if (!this.url || this.reconnectAttempts >= this.maxReconnectAttempts) {
+            console.log('Tentative de reconnexion abandonnée ou nombre maximum atteint.');
             return;
         }
 
-        console.log('Tentative de reconnexion WebSocket...');
-        this.connect(this.url);
-
-        // Exécute un callback après la reconnexion si nécessaire
-        if (callback) {
-            setTimeout(callback, 1000); // Attend un peu pour s'assurer que la connexion est établie
+        if (this.ws && (this.ws.readyState === WebSocket.CONNECTING || this.ws.readyState === WebSocket.OPEN)) {
+            console.log('WebSocket est déjà connecté ou en cours de connexion.');
+            return;
         }
+
+        console.log(`Tentative de reconnexion WebSocket... (${this.reconnectAttempts + 1})`);
+        setTimeout(() => {
+            this.connect(this.url);
+            this.reconnectAttempts++;
+            if (callback) {
+                callback();
+            }
+        }, this.reconnectInterval);
     }
 }
 
-export const ws = new WebSocketService()
+export const ws = new WebSocketService();
