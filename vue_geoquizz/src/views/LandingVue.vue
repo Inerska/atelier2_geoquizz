@@ -4,6 +4,7 @@ import Tooltip from '@/components/Tooltip.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import { ws } from '@/utils/WebSocketService'
+import axios from 'axios'
 
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
@@ -50,17 +51,16 @@ export default {
     }
   },
   created() {
-    fetch('/service_geoquizz/games')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-      })
 
-    fetch('/service_series/levels')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
+    fetch('/service_auth/api/v1/login', {
+      method: 'POST'
+    })
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   },
   methods: {
     createGame() {

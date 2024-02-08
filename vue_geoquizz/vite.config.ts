@@ -10,12 +10,15 @@ export default defineConfig({
     ],
     server: {
         host: true,
-        port: 80,
+        port: 81,
         watch: {
             usePolling: true
         },
         proxy: {
-            '/gateway': 'http://gateway_nginx/api/v1/',
+            '/gateway': 'http://gateway_nginx:80',
+            '/service_geoquizz': 'http://service_geoquizz:80',
+            '/service_auth': 'http://auth_geoquizz:80',
+            '/service_directus': 'http://series_directus'
         }
     },
     resolve: {

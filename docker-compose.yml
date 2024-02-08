@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile
     container_name: "vue_geoquizz"
     ports:
-      - "80:80"
+      - "81:81"
     volumes:
       - /app/node_modules
       - ./vue_geoquizz:/app
