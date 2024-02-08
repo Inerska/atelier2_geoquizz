@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
@@ -23,11 +24,45 @@ final class Game
     #[Column]
     private int $level_id;
 
-    #[Column]
-    private int $photo_id;
+    private array $photos;
 
     #[Column]
     private string $status;
+
+    #[Column]
+    private bool $isPublic;
+
+    /**
+     * @return array
+     */
+    public function getPhotos(): array
+    {
+        return $this->photos;
+    }
+
+    /**
+     * @param array $photos
+     */
+    public function setPhotos(array $photos): void
+    {
+        $this->photos = $photos;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param bool $isPublic
+     */
+    public function setIsPublic(bool $isPublic): void
+    {
+        $this->isPublic = $isPublic;
+    }
 
     /**
      * @return int

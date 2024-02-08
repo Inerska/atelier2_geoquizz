@@ -11,13 +11,6 @@ use geoquizz\service\web\action\UpdateProfileAction;
 
 return static function ($app) {
 
-    // hello world
-    $app->get('/api/v1/hello/{name}', function ($request, $response, $args) {
-        $name = $args['name'];
-        $response->getBody()->write("Hello, $name");
-        return $response;
-    });
-
     $app->get('/games[/]', ListGamesAction::class);
 
     $app->get('/games/{id}[/]', GetGameAction::class);
@@ -26,7 +19,7 @@ return static function ($app) {
 
     $app->post('/games[/]', CreateGameAction::class);
 
-    $app->get('/profiles[/]', GetProfileAction::class);
+    $app->get('/profiles/{id}[/]', GetProfileAction::class);
 
     $app->put('/profiles/{id}[/]', UpdateProfileAction::class);
 };
