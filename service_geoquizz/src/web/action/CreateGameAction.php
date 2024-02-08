@@ -57,17 +57,16 @@ final class CreateGameAction extends AbstractAction
         $game->setIsPublic($is_public);
 
         try {
-            $this->entityManager->persist($game);
-            $this->entityManager->flush();
-
             $playedGame = new PlayedGame();
 
             $profile = $this->entityManager->find(Profile::class, $profile_id);
 
             if ($profile === null) {
-                $request->getBody()->write(json_encode(['error' => 'Profile not found'], JSON_THROW_ON_ERROR));
                 return $response->withStatus(404);
             }
+
+            $this->entityManager->persist($game);
+            $this->entityManager->flush();
 
             $playedGame->setProfile($profile);
 
