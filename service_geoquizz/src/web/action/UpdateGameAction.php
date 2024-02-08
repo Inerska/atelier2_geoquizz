@@ -20,21 +20,6 @@ final class UpdateGameAction extends AbstractAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        $raw = $request->getBody()->getContents();
-        $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
 
-        $game = $this->entityManager->getRepository(Game::class)->find($args['id']);
-        if ($game === null) {
-            $request->getBody()->write('Game not found');
-            return $response->withStatus(404);
-        }
-
-        //TODO: impl
-
-        $this->entityManager->persist($game);
-        $this->entityManager->flush();
-
-        $request->getBody()->write(json_encode($game, JSON_THROW_ON_ERROR));
-        return $response->withStatus(200);
     }
 }
