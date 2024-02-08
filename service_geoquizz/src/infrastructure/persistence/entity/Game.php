@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
-final class Game
+class Game
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column(name: 'id', type: 'integer', nullable: false)]

@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
-final class Profile
+class Profile
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column]
