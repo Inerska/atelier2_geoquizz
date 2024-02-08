@@ -51,7 +51,7 @@ export default defineComponent({
 
     const roundsData = ref([
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy.jpg' },
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy2.jpg' },
+      { coords: [45.693623, 7.183672] as L.LatLngExpression, imageUrl: '/img/Nancy2.jpg' },
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy3.jpg' },
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy4.jpg' },
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy5.jpg' }
@@ -166,6 +166,9 @@ export default defineComponent({
 </script>
 
 <style>
+p {
+  color: black;
+}
 body {
   margin: 0 !important;
 }
