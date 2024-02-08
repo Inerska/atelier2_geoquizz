@@ -10,8 +10,10 @@ import { ws } from '@/utils/WebSocketService'
 export default {
   components: {
     Game,
-    Tooltip
-  },
+    Tooltip,
+    HeaderComponent,
+    FooterComponent,
+},
   data() {
     return {
       gamesList: [],
@@ -74,7 +76,7 @@ export default {
 </script>
 
 <template>
-  <div>le header!</div>
+  <HeaderComponent />
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
     <h3>Et si tu challengais ta culture géographique ?</h3>
@@ -117,15 +119,19 @@ export default {
       <Tooltip desc="Découvre les parties créées par d'autres joueurs !" width="27"/>
     </div>
     <div class="public-games-cards">
-      <Game v-for="game in publicGames" :level="game.level" :link="game.id" :serie="game.serie" class="card"/>
+      <Game v-for="game in publicGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie" class="card"/>
     </div>
   </div>
-
+  <FooterComponent />
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $offwhite: darken(white, 10%);
 $darkblue: rgb(57, 56, 91);
+
+body {
+  overflow-y: auto;
+}
 
 .new-game {
   text-align: center;
