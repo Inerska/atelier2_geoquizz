@@ -62,13 +62,13 @@ export default {
   created() {
 
 
-    fetch('/series')
+    this.$api.get('/series')
         .then(response => response.json())
         .then(data => {
           console.log(data)
         })
 
-    fetch('/levels')
+    this.$api.get('/levels')
         .then(response => response.json())
         .then(data => {
           console.log(data)

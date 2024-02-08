@@ -16,7 +16,7 @@ export default defineConfig({
         },
         proxy: {
             '^/gateway': {
-                target: 'http://gateway_nginx:80/api/v1',
+                target: 'http://gateway_nginx:80',
                 rewrite: path => path.replace(/^\/gateway/, ''),
             },
         }
