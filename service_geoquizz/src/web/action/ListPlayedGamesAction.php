@@ -5,45 +5,63 @@ declare(strict_types=1);
 namespace geoquizz\service\web\action;
 
 use Doctrine\ORM\EntityManager;
-use geoquizz\service\domain\dto\PlayedGameDto;
 use geoquizz\service\infrastructure\action\AbstractAction;
+use geoquizz\service\infrastructure\persistence\entity\Game;
 use geoquizz\service\infrastructure\persistence\entity\PlayedGame;
 use geoquizz\service\infrastructure\persistence\entity\Profile;
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class ListPlayedGamesAction extends AbstractAction
 {
     public function __construct(
-        private readonly EntityManager $entityManager)
+        private readonly EntityManager $entityManager,
+        private readonly Client $client)
     {
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        $profileId = $args['profileId'];
-
-        if (empty($profileId)) {
-            $response->getBody()->write(json_encode(['error' => 'profileId is required']));
-            return $response
-                ->withStatus(400);
-        }
-
+        $profileId = $args['id'];
         $profile = $this->entityManager->find(Profile::class, $profileId);
+
         if (!$profile) {
             $response->getBody()->write(json_encode(['error' => 'Profile not found']));
             return $response->withStatus(404);
         }
 
-        $playedGames = $this->entityManager->getRepository(PlayedGame::class)->findBy(['profile' => $profileId]);
+        $playedGames = $this->entityManager->getRepository(PlayedGame::class)->findBy(['profile' => $profile]);
 
-        $playedGamesDto = array_map(function ($playedGame) {
-            return new PlayedGameDto($playedGame);
-        }, $playedGames);
+        $playedGamesData = [];
+        foreach ($playedGames as $playedGame) {
+            $gameId = $playedGame->getGameId();
+            $game = $this->entityManager->find(Game::class, $gameId);
+            if (!$game) {
+                continue;
+            }
 
-        $response->getBody()->write(json_encode($playedGamesDto));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(200);
+            $photo = json_decode($game->getPhotos(), false, 512, JSON_THROW_ON_ERROR);
+            $photo = $photo[0];
+
+            $requestSeries = $this->client->request('GET', 'http://gateway_nginx/api/v1/series/' . $game->getSerieId());
+            $series = json_decode($requestSeries->getBody()->getContents(), true);
+
+            $city = $series['data']['city'];
+
+            $requestLevel = $this->client->request('GET', 'http://gateway_nginx/api/v1/levels/' . $game->getLevelId());
+            $level = json_decode($requestLevel->getBody()->getContents(), true);
+            $level = $level['data']['title'];
+
+            $playedGamesData[] = [
+                'image' => $photo,
+                'city' => $city,
+                'level' => $level,
+                'score' => $playedGame->getScore(),
+            ];
+        }
+
+        $response->getBody()->write(json_encode($playedGamesData));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

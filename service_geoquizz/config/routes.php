@@ -27,5 +27,5 @@ return static function ($app) {
 
     $app->put('/profiles/{id}[/]', UpdateProfileAction::class);
 
-    $app->get('/playedGames/{profileId}[/]', ListPlayedGamesAction::class);
+    $app->get('/profiles/{id}/playedGames[/]', ListPlayedGamesAction::class);
 };
