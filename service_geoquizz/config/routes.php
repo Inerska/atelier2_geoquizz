@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use geoquizz\service\web\action\CreateGameAction;
+use geoquizz\service\web\action\CreateProfileAction;
 use geoquizz\service\web\action\GetGameAction;
 use geoquizz\service\web\action\GetProfileAction;
 use geoquizz\service\web\action\ListGamesAction;
@@ -20,6 +21,8 @@ return static function ($app) {
     $app->post('/games[/]', CreateGameAction::class);
 
     $app->get('/profiles/{id}[/]', GetProfileAction::class);
+
+    $app->post('/profiles[/]', CreateProfileAction::class);
 
     $app->put('/profiles/{id}[/]', UpdateProfileAction::class);
 };

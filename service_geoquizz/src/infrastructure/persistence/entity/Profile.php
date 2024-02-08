@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -30,10 +32,17 @@ final class Profile
 
     #[Column]
     private string $lastname;
-    #[Column(name: 'actualGame'), OneToOne(targetEntity: 'Game')]
-    private Game $actualGame;
+
+    #[Column(nullable: true), OneToOne(targetEntity: 'Game')]
+    private ?Game $actualGame = null;
+
     #[Column(name: 'savedGames'), OneToMany(targetEntity: 'PlayedGame')]
     private array $savedGames;
+
+    public function __construct()
+    {
+        $this->savedGames = [];
+    }
 
     /**
      * @return int
@@ -126,7 +135,7 @@ final class Profile
     /**
      * @param Game $actualGame
      */
-    public function setActualGame(Game $actualGame): void
+    public function setActualGame(?Game $actualGame): void
     {
         $this->actualGame = $actualGame;
     }

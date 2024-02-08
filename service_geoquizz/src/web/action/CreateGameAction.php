@@ -9,6 +9,8 @@ use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use geoquizz\service\infrastructure\action\AbstractAction;
 use geoquizz\service\infrastructure\persistence\entity\Game;
+use geoquizz\service\infrastructure\persistence\entity\PlayedGame;
+use geoquizz\service\infrastructure\persistence\entity\Profile;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,6 +30,7 @@ final class CreateGameAction extends AbstractAction
         $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
         $serie_id = $data['serie_id'];
         $level_id = $data['level_id'];
+        $profile_id = $data['profile_id'];
         $is_public = $data['is_public'] ?? false;
 
         $photos = $this->httpClient->request(
@@ -55,6 +58,27 @@ final class CreateGameAction extends AbstractAction
 
         try {
             $this->entityManager->persist($game);
+            $this->entityManager->flush();
+
+            $playedGame = new PlayedGame();
+
+            $profile = $this->entityManager->find(Profile::class, $profile_id);
+
+            if ($profile === null) {
+                $request->getBody()->write(json_encode(['error' => 'Profile not found'], JSON_THROW_ON_ERROR));
+                return $response->withStatus(404);
+            }
+
+            $playedGame->setProfile($profile);
+
+            $playedGame->setStatus(0);
+            $playedGame->setGameId($game->getId());
+            $playedGame->setScore(-1);
+            $playedGame->setAdvancement(-1);
+            $playedGame->setTime(-1);
+            $playedGame->setDistance(-1);
+
+            $this->entityManager->persist($playedGame);
             $this->entityManager->flush();
         } catch (NotSupported $e) {
             $request->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
