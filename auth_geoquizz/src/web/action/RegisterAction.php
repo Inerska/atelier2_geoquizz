@@ -41,15 +41,16 @@ final class RegisterAction extends AbstractAction
             $jsonBody = $request->getBody()->getContents();
             $body = json_decode($jsonBody, true);
 
-            $fields_to_validate = ['mail', 'password', 'confirm_password'];
+            $fields_to_validate = ['mail', 'username', 'password', 'confirm_password'];
 
             $this->requestBodyValidator->validate($body, $fields_to_validate);
 
             $mail = $body['mail'];
+            $username = $body['username'];
             $password = $body['password'];
             $confirm_password = $body['confirm_password'];
 
-            $credential = new CredentialDTO($mail, $password, $confirm_password);
+            $credential = new CredentialDTO($mail, $password, $confirm_password, $username);
 
             $data = $this->authenticationService->signUp($credential);
             return SuccessResponseGenerator::generateSuccessResponse($data);
