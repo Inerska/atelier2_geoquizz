@@ -87,6 +87,8 @@ final class CreateGameAction extends AbstractAction
             return $response->withStatus(500);
         }
 
+        $response->getBody()->write(json_encode(['id' => $playedGame->getId()], JSON_THROW_ON_ERROR));
+
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus(201);

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -23,15 +21,6 @@ final class Profile
 
     #[Column]
     private string $username;
-
-    #[Column]
-    private string $email;
-
-    #[Column]
-    private string $firstname;
-
-    #[Column]
-    private string $lastname;
 
     #[Column(nullable: true), OneToOne(targetEntity: 'Game')]
     private ?Game $actualGame = null;
@@ -77,63 +66,15 @@ final class Profile
     }
 
     /**
-     * @return string
+     * @return Game|null
      */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstname(): string
-    {
-        return $this->firstname;
-    }
-
-    /**
-     * @param string $firstname
-     */
-    public function setFirstname(string $firstname): void
-    {
-        $this->firstname = $firstname;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastname(): string
-    {
-        return $this->lastname;
-    }
-
-    /**
-     * @param string $lastname
-     */
-    public function setLastname(string $lastname): void
-    {
-        $this->lastname = $lastname;
-    }
-
-    /**
-     * @return Game
-     */
-    public function getActualGame(): Game
+    public function getActualGame(): ?Game
     {
         return $this->actualGame;
     }
 
     /**
-     * @param Game $actualGame
+     * @param Game|null $actualGame
      */
     public function setActualGame(?Game $actualGame): void
     {

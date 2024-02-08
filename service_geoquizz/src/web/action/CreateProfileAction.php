@@ -26,9 +26,6 @@ final class CreateProfileAction extends AbstractAction
 
         $profile = new Profile();
         $profile->setUsername($data['username']);
-        $profile->setEmail($data['email']);
-        $profile->setFirstname($data['firstname']);
-        $profile->setLastname($data['lastname']);
         $profile->setActualGame(null);
 
         try {
