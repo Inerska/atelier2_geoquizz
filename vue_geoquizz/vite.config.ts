@@ -15,8 +15,7 @@ export default defineConfig({
             usePolling: true
         },
         proxy: {
-            '/service_geoquizz': 'http://service_geoquizz',
-            '/service_series': 'http://series_directus',
+            '/gateway': 'http://gateway_nginx/api/v1/',
         }
     },
     resolve: {
