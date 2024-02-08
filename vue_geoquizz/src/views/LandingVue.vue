@@ -1,7 +1,9 @@
 <script lang="ts">
 import Game from '@/components/Game.vue'
-import HeaderComponent from '@/components/HeaderComponent.vue';
-import FooterComponent from '@/components/FooterComponent.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import { ws } from '@/utils/WebSocketService'
+
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
 export default {
@@ -12,35 +14,41 @@ export default {
   },
   data() {
     return {
-
       publicGames: {
         game1: {
-          serie: "Paris",
-          level: "easy",
-          photo: "../assets/img/Nancy.jpg"
+          id: 1,
+          serie: 'Paris',
+          level: 'easy',
+          photo: '../assets/img/Nancy.jpg'
         },
         game2: {
-          serie: "Montpellier",
-          level: "medium",
-          photo: ""
+          id: 2,
+          serie: 'Montpellier',
+          level: 'medium',
+          photo: ''
         },
         game3: {
-          serie: "Nancy",
-          level: "hard",
-          photo: ""
+          id: 3,
+          serie: 'Nancy',
+          level: 'hard',
+          photo: ''
         },
         game4: {
-          serie: "Nancy",
-          level: "easy",
-          photo: ""
+          id: 4,
+          serie: 'Nancy',
+          level: 'easy',
+          photo: ''
         }
       }
     }
   },
   methods: {
     createGame() {
-      console.log("createGame")
+      console.log('createGame')
     }
+  },
+  mounted() {
+    ws.connect("ws://localhost:5200")
   }
 }
 </script>
@@ -68,23 +76,28 @@ export default {
   </div>
   <div class="current-game">
     <div class="current-game-card">
-      <img class="current-game-img" src="/img/Nancy.jpg" alt="NYC"/>
-      <div class="current-game-button-1"> MONTPELLIER</div>
-      <div class="current-game-button-2"> Continuer la partie</div>
+      <img class="current-game-img" src="/img/Nancy.jpg" alt="NYC" />
+      <div class="current-game-button-1">MONTPELLIER</div>
+      <div class="current-game-button-2">Continuer la partie</div>
     </div>
   </div>
 
   <div class="public-games">
     <h2>Parties publiques</h2>
     <div class="public-games-cards">
-      <Game class="card" v-for="game in publicGames" :serie="game.serie" :level="game.level"/>
+      <Game
+        class="card"
+        v-for="game in publicGames"
+        :key="game.id"
+        :serie="game.serie"
+        :level="game.level"
+      />
     </div>
   </div>
   <FooterComponent />
 </template>
 
 <style scoped>
-
 .new-game {
   text-align: center;
   color: white;
@@ -93,7 +106,7 @@ export default {
 h2 {
   margin: 0;
   font-size: 2em;
-  padding: .2em;
+  padding: 0.2em;
 }
 
 h3 {
@@ -127,7 +140,7 @@ select {
   padding: 0 3em 0 1em;
   background-color: #fff;
   border: 1px solid #caced1;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   color: black;
   cursor: pointer;
 }
@@ -139,7 +152,7 @@ select {
   color: white;
   border: none;
   border-radius: 1rem;
-  padding: .5em 1.5em;
+  padding: 0.5em 1.5em;
   transition: 0.8s;
 }
 
@@ -147,7 +160,6 @@ select {
   background-color: rgb(18, 16, 24);
   transition: 0.8s;
 }
-
 
 .current-game-card {
   color: white;
@@ -174,10 +186,10 @@ select {
   filter: blur(1px) brightness(0.4);
   transform: scale(1.2);
   transition: 0.4s;
-
 }
 
-.current-game-button-1, .current-game-button-2 {
+.current-game-button-1,
+.current-game-button-2 {
   position: relative;
   z-index: 100;
   right: 1em;
@@ -193,14 +205,14 @@ select {
 }
 
 .current-game-button-2 {
-  top: -2em
+  top: -2em;
 }
 
-.public-games, .current-game {
+.public-games,
+.current-game {
   padding-top: 2em;
   padding-right: 2em;
   padding-left: 2em;
-
 }
 
 .public-games-cards {
@@ -209,5 +221,4 @@ select {
   column-gap: 2em;
   row-gap: 1em;
 }
-
 </style>
