@@ -10,12 +10,15 @@ export default defineConfig({
     ],
     server: {
         host: true,
-        port: 80,
+        port: 81,
         watch: {
             usePolling: true
         },
         proxy: {
-            '/gateway': 'http://gateway_nginx/api/v1/',
+            '^/gateway': {
+                target: 'http://gateway_nginx:80',
+                rewrite: path => path.replace(/^\/gateway/, ''),
+            },
         }
     },
     resolve: {

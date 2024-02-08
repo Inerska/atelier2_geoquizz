@@ -10,6 +10,8 @@ const BASE_PATH = '/api/v1';
 
 return function ($app) {
 
+
+
     $app->post(BASE_PATH . '/login', LoginAction::class);
     $app->post(BASE_PATH . '/register', RegisterAction::class);
     $app->post(BASE_PATH . '/token', TokenAction::class);
