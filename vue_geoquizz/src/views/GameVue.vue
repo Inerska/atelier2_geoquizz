@@ -165,12 +165,12 @@ export default defineComponent({
 })
 </script>
 
-<style>
-p {
-  color: black;
-}
+
 body {
   margin: 0 !important;
+}
+p {
+  color: black;
 }
 .button-next {
   background-color: aliceblue;

@@ -15,6 +15,7 @@ export default {
     Tooltip,
     HeaderComponent,
     FooterComponent,
+
 },
   data() {
     return {
@@ -60,15 +61,15 @@ export default {
     }
   },
   created() {
+    ws.connect('ws://localhost:5200')
 
-    this.$api.post('/login')
-      .then((response) => {
-        console.log(response)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
-    fetch('/service_series/serie')
+    this.$api.get('/series')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
+
+    this.$api.get('/levels')
         .then(response => response.json())
         .then(data => {
           console.log(data)
@@ -81,9 +82,6 @@ export default {
     linkSerie(id) {
       this.$router.push("/serie/" + id)
     }
-  },
-  mounted() {
-    ws.connect("ws://localhost:5200")
   }
 }
 </script>
@@ -138,7 +136,7 @@ export default {
   <FooterComponent />
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 $offwhite: darken(white, 10%);
 $darkblue: rgb(57, 56, 91);
 

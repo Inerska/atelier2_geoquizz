@@ -6,7 +6,7 @@ class WebSocketService {
     private url: string = '';
     private reconnectAttempts: number = 1;
     private maxReconnectAttempts: number = 3;
-    private reconnectInterval: number = 5000; // Délai entre les tentatives de reconnexion en millisecondes
+    private reconnectInterval: number = 5000;
 
     connect(url: string) {
         this.url = url;
