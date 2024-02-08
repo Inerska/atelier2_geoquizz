@@ -50,10 +50,14 @@ class Account
     #[Column]
     private string $refreshToken;
 
-    public function __construct(string $mail, string $password)
+    #[Column]
+    private int $profileId;
+
+    public function __construct(string $mail, string $password, int $profileId)
     {
         $this->mail = $mail;
         $this->password = $password;
+        $this->profileId = $profileId;
     }
 
     /**

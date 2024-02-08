@@ -15,6 +15,10 @@ class CredentialDTO
      */
     private string $mail;
     /**
+     * @var string $username
+     */
+    private string $username;
+    /**
      * @var string $password
      */
     private string $password;
@@ -29,9 +33,10 @@ class CredentialDTO
      * @param string $password
      * @param string $confirmPassword
      */
-    public function __construct(string $mail, string $password, string $confirmPassword = "")
+    public function __construct(string $mail, string $password, string $confirmPassword = "", string $username = "")
     {
         $this->mail = $mail;
+        $this->username = $username;
         $this->password = $password;
         $this->confirmPassword = $confirmPassword;
     }
