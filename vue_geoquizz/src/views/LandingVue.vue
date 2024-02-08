@@ -69,7 +69,6 @@ export default {
 
 <template>
   <div>le header!</div>
-  <h1 class="test">slft</h1>
   <div class="new-game">
     <h2>Lancer une nouvelle partie</h2>
     <h3>Et si tu challengais ta culture géographique ?</h3>
@@ -122,85 +121,9 @@ export default {
 $offwhite: darken(white, 10%);
 $darkblue: rgb(57, 56, 91);
 
-.test {
-  font-size: 5rem;
-  color: red;
-}
-
-.series-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(5em, 1fr));
-  column-gap: 2em;
-  row-gap: 1em;
-
-  button {
-    text-transform: uppercase;
-    position: relative;
-    font-size: 18px;
-    transition: color 0.5s, transform 0.2s, background-color 0.2s;
-    outline: none;
-    border-radius: 3px;
-    margin: 0 10px;
-    padding: 23px 33px;
-    border: 3px solid transparent;
-  }
-
-  &:active {
-    transform: translateY(3px);
-  }
-
-  &::after, &::before {
-    border-radius: 3px;
-  }
-
-  .material-bubble {
-    background-color: transparent;
-    color: darken($offwhite, 10%);
-    border: none;
-    overflow: hidden;
-    box-shadow: none;
-
-    &:hover {
-      color: $offwhite;
-    }
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 2px solid darken($offwhite, 10%);
-      transition: opacity 0.3s, border 0.3s;
-    }
-
-    &:hover::before {
-      opacity: 0;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 200px;
-      background-color: lighten($darkblue, 10%);
-      border-color: transparent;
-      border-radius: 50%;
-      transform: translate(-10px, -70px) scale(0.1);
-      opacity: 0;
-      z-index: -1;
-      transition: transform 0.3s, opacity 0.3s, background-color 0.3s;
-    }
-
-    &:hover::after {
-      opacity: 1;
-      transform-origin: 100px 100px;
-      transform: scale(1) translate(-10px, -70px);
-    }
-  }
+.new-game {
+  text-align: center;
+  color: white;
 
   .info {
     color: white;
@@ -213,50 +136,22 @@ $darkblue: rgb(57, 56, 91);
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
-
   }
+}
 
-  .title {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    margin-bottom: 1em;
-  }
-
-  h3 {
-    font-size: 1.2em;
-    color: rgba(255, 255, 255, 0.3);
-    text-align: center;
-    margin: 0;
-    padding-bottom: 1em;
-    font-weight: 400;
-  }
-
-  .new-game {
-    text-align: center;
-    color: white;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: 2.5em;
-    padding: .2em;
-  }
-
-  .new-game-banner {
-    background-color: rgba(26, 26, 45, 0.42);
-    border: 1px solid rgb(57, 56, 91);
-    border-radius: 1rem;
-    width: fit-content;
-    margin-right: auto;
-    margin-left: auto;
-    padding: 1.5em;
-    display: flex;
-    flex-direction: row;
-    gap: 1em;
-    justify-content: center;
-    align-items: center;
-  }
+.new-game-banner {
+  background-color: rgba(26, 26, 45, 0.42);
+  border: 1px solid rgb(57, 56, 91);
+  border-radius: 1rem;
+  width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 1.5em;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
 
   select {
     appearance: none;
@@ -279,23 +174,22 @@ $darkblue: rgb(57, 56, 91);
     border-radius: 1rem;
     padding: .5em 1.5em;
     transition: 0.8s;
-  }
 
-  .new-game-button:hover {
-    background-color: rgb(18, 16, 24);
-    transition: 0.8s;
+    &:hover {
+      background-color: rgb(18, 16, 24);
+      transition: 0.8s;
+    }
   }
+}
 
-
-  .current-game-card {
-    color: white;
-    border-radius: 7px;
-    overflow: hidden;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 8px 24px;
-    width: 20em;
-    height: 10em;
-    cursor: pointer;
-  }
+.current-game-card {
+  color: white;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 8px 24px;
+  width: 20em;
+  height: 10em;
+  cursor: pointer;
 
   .current-game-img {
     object-fit: cover;
@@ -305,14 +199,13 @@ $darkblue: rgb(57, 56, 91);
     height: 10em;
     transform: scale(1.1);
     cursor: pointer;
-  }
 
-  .current-game-img:hover {
-    object-fit: cover;
-    filter: blur(1px) brightness(0.4);
-    transform: scale(1.2);
-    transition: 0.4s;
-
+    &:hover {
+      object-fit: cover;
+      filter: blur(1px) brightness(0.4);
+      transform: scale(1.2);
+      transition: 0.4s;
+    }
   }
 
   .current-game-button-1, .current-game-button-2 {
@@ -323,22 +216,129 @@ $darkblue: rgb(57, 56, 91);
     float: right;
     font-size: 1.2em;
     font-weight: 300;
+
+    .current-game-button-1 {
+      top: -3.5em;
+      font-weight: bold;
+    }
+
+    .current-game-button-2 {
+      top: -2em;
+    }
+  }
+}
+
+.all-series {
+  padding-top: 2em;
+  padding-right: 2em;
+  padding-left: 2em;
+
+  .title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1em;
   }
 
-  .current-game-button-1 {
-    top: -3.5em;
-    font-weight: bold;
+  h2 {
+    margin: 0;
+    font-size: 2.5em;
+    padding: .2em;
   }
 
-  .current-game-button-2 {
-    top: -2em
+  .series-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5em, 1fr));
+    column-gap: 2em;
+    row-gap: 1em;
+
+    button {
+      text-transform: uppercase;
+      position: relative;
+      font-size: 18px;
+      transition: color 0.5s, transform 0.2s, background-color 0.2s;
+      outline: none;
+      border-radius: 3px;
+      margin: 0 10px;
+      padding: 23px 33px;
+      border: 3px solid transparent;
+
+      &:active {
+        transform: translateY(3px);
+      }
+
+      &::after, &::before {
+        border-radius: 3px;
+      }
+
+      .material-bubble {
+        background-color: transparent;
+        color: darken($offwhite, 10%);
+        border: none;
+        overflow: hidden;
+        box-shadow: none;
+
+        &:hover {
+          color: $offwhite;
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border: 2px solid darken($offwhite, 10%);
+          transition: opacity 0.3s, border 0.3s;
+        }
+
+        &:hover::before {
+          opacity: 0;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 200px;
+          height: 200px;
+          background-color: lighten($darkblue, 10%);
+          border-color: transparent;
+          border-radius: 50%;
+          transform: translate(-10px, -70px) scale(0.1);
+          opacity: 0;
+          z-index: -1;
+          transition: transform 0.3s, opacity 0.3s, background-color 0.3s;
+        }
+
+        &:hover::after {
+          opacity: 1;
+          transform-origin: 100px 100px;
+          transform: scale(1) translate(-10px, -70px);
+        }
+      }
+    }
+  }
+}
+
+.public-games {
+  padding-top: 2em;
+  padding-right: 2em;
+  padding-left: 2em;
+
+  .title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1em;
   }
 
-  .public-games, .current-game, .all-series {
-    padding-top: 2em;
-    padding-right: 2em;
-    padding-left: 2em;
-
+  h2 {
+    margin: 0;
+    font-size: 2.5em;
+    padding: .2em;
   }
 
   .public-games-cards {
