@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace geoquizz\service\web\action;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Exception\NotSupported;
+use geoquizz\service\domain\dto\GameDto;
 use geoquizz\service\infrastructure\action\AbstractAction;
 use geoquizz\service\infrastructure\persistence\entity\Game;
 use Psr\Http\Message\ResponseInterface;
@@ -19,17 +19,17 @@ final class GetGameAction extends AbstractAction
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        try {
-            $game = $this->entityManager->getRepository(Game::class)->find($args['id']);
-        } catch (NotSupported $e) {
-            $request->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
-            return $response->withStatus(500);
-        }
+        $game = $this->entityManager->find(Game::class, $args['id']);
+
         if ($game === null) {
+            $response->getBody()->write(json_encode(['error' => 'Game not found'], JSON_THROW_ON_ERROR));
             return $response->withStatus(404);
         }
 
-        $response->getBody()->write(json_encode($game, JSON_THROW_ON_ERROR));
-        return $response->withHeader('Content-Type', 'application/json');
+        $gameDto = new GameDto($game);
+
+        $response->getBody()->write(json_encode($gameDto, JSON_THROW_ON_ERROR));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

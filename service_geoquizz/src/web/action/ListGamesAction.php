@@ -6,6 +6,7 @@ namespace geoquizz\service\web\action;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
+use geoquizz\service\domain\dto\GameDto;
 use geoquizz\service\infrastructure\action\AbstractAction;
 use geoquizz\service\infrastructure\persistence\entity\Game;
 use Psr\Http\Message\ResponseInterface;
@@ -28,7 +29,13 @@ final class ListGamesAction extends AbstractAction
         }
         $games = $gameRepository->findAll();
 
-        $response->getBody()->write(json_encode($games));
-        return $response;
+        $games = array_map(static function ($game) {
+            return new GameDto($game);
+        }, $games);
+
+        $response->getBody()->write(json_encode($games, JSON_THROW_ON_ERROR));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(200);
     }
 }

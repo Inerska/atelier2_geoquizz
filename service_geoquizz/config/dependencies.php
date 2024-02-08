@@ -5,14 +5,14 @@ declare(strict_types=1);
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
+use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 return function ($container) {
     $container->set('logger', function () {
-        $logger = new Logger('my_logger');
-        $file_handler = new StreamHandler(__DIR__ . '/../logs/app.log');
-        $logger->pushHandler($file_handler);
+        $logger = new Logger('geoquizz');
+        $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
         return $logger;
     });
 
@@ -30,5 +30,9 @@ return function ($container) {
         } catch (Exception $e) {
             echo $e->getMessage();
         }
+    });
+
+    $container->set('http_client', function () {
+        return new Client();
     });
 };

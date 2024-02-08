@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
-final class Profile
+class Profile
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column]
@@ -22,18 +22,16 @@ final class Profile
     #[Column]
     private string $username;
 
-    #[Column]
-    private string $email;
+    #[Column(nullable: true), OneToOne(targetEntity: 'Game')]
+    private ?Game $actualGame = null;
 
-    #[Column]
-    private string $firstname;
-
-    #[Column]
-    private string $lastname;
-    #[Column(name: 'actualGame'), OneToOne(targetEntity: 'Game')]
-    private Game $actualGame;
     #[Column(name: 'savedGames'), OneToMany(targetEntity: 'PlayedGame')]
     private array $savedGames;
+
+    public function __construct()
+    {
+        $this->savedGames = [];
+    }
 
     /**
      * @return int
@@ -68,65 +66,17 @@ final class Profile
     }
 
     /**
-     * @return string
+     * @return Game|null
      */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstname(): string
-    {
-        return $this->firstname;
-    }
-
-    /**
-     * @param string $firstname
-     */
-    public function setFirstname(string $firstname): void
-    {
-        $this->firstname = $firstname;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastname(): string
-    {
-        return $this->lastname;
-    }
-
-    /**
-     * @param string $lastname
-     */
-    public function setLastname(string $lastname): void
-    {
-        $this->lastname = $lastname;
-    }
-
-    /**
-     * @return Game
-     */
-    public function getActualGame(): Game
+    public function getActualGame(): ?Game
     {
         return $this->actualGame;
     }
 
     /**
-     * @param Game $actualGame
+     * @param Game|null $actualGame
      */
-    public function setActualGame(Game $actualGame): void
+    public function setActualGame(?Game $actualGame): void
     {
         $this->actualGame = $actualGame;
     }

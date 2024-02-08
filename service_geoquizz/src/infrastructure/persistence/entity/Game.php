@@ -4,30 +4,28 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
+use AllowDynamicProperties;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
-final class Game
+class Game
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column(name: 'id', type: 'integer', nullable: false)]
     private int $id;
-
     #[Column]
     private int $serie_id;
-
     #[Column]
     private int $level_id;
-
     #[Column]
-    private int $photo_id;
-
+    private string $photos;
     #[Column]
-    private string $status;
+    private bool $isPublic;
 
     /**
      * @return int
@@ -78,35 +76,34 @@ final class Game
     }
 
     /**
-     * @return int
-     */
-    public function getPhotoId(): int
-    {
-        return $this->photo_id;
-    }
-
-    /**
-     * @param int $photo_id
-     */
-    public function setPhotoId(int $photo_id): void
-    {
-        $this->photo_id = $photo_id;
-    }
-
-    /**
      * @return string
      */
-    public function getStatus(): string
+    public function getPhotos(): string
     {
-        return $this->status;
+        return $this->photos;
     }
 
     /**
-     * @param string $status
+     * @param string $photos
      */
-    public function setStatus(string $status): void
+    public function setPhotos(string $photos): void
     {
-        $this->status = $status;
+        $this->photos = $photos;
     }
 
+    /**
+     * @return bool
+     */
+    public function isPublic(): bool
+    {
+        return $this->isPublic;
+    }
+
+    /**
+     * @param bool $isPublic
+     */
+    public function setIsPublic(bool $isPublic): void
+    {
+        $this->isPublic = $isPublic;
+    }
 }
