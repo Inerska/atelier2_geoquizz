@@ -6,7 +6,8 @@ import FooterComponent from '@/components/FooterComponent.vue'
 import { ws } from '@/utils/WebSocketService'
 // import CreateGameComponent from "@/components/CreateGameComponent.vue";
 // import axios from 'axios'
-
+import { mapState } from 'pinia'
+import { useUserStore } from '@/store/user'
 //TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
 
 export default {
@@ -55,6 +56,7 @@ export default {
     }
   },
   created() {
+    console.log("user dans le created ", this.user)
     this.$api.get('/series')
         .then(resp => {
           this.seriesList = resp.data.data

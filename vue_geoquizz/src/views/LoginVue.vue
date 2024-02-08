@@ -1,28 +1,9 @@
-<template>
-  <div class="login-page">
-    <HeaderComponent />
-    <div class="login-container">
-      <form class="login-form" @submit.prevent="onSubmit">
-        <h2>Connexion</h2>
-        <div class="form-group">
-          <input v-model="mail" type="email" id="email" placeholder=" " required />
-          <label for="email">Email</label>
-        </div>
-        <div class="form-group">
-          <input v-model="password" type="password" id="password" placeholder=" " required />
-          <label for="password">Mot de passe</label>
-        </div>
-        <button @click="connection()" class="login-button">Se connecter</button>
-        <div class="register"><RouterLink to="/inscription">Pas encore de compte ? Inscrivez-vous</RouterLink></div>
-      </form>
-    </div>
-    <FooterComponent />
-  </div>
-</template>
-
 <script lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
+import { mapState } from 'pinia'
+import { useUserStore } from '@/store/user'
+
 
 export default {
   components: {
@@ -43,14 +24,46 @@ export default {
         mail: this.mail,
         password: this.password
       }).then(resp => {
-        console.log(resp.data)
+        const userStore = useUserStore();
+        console.log("resp.data dans la réponse ",resp.data)
+        userStore.loginUser({
+          accessToken: resp.data.refreshToken,
+          refreshToken: resp.data.accessToken,
+        })
+        console.log("user dans le UserStore ", userStore.user)
       }).catch (err => {
-        console.log(err.response.data)
+        console.log(err)
       })
     }
+  },
+  created() {
+    console.log("user dans le created ", this.user)
   }
 }
 </script>
+
+<template>
+  <div class="login-page">
+    <HeaderComponent />
+    <div class="login-container">
+      <div>Test du store :   {{user}} </div>
+      <form class="login-form" @submit.prevent="onSubmit">
+        <h2>Connexion</h2>
+        <div class="form-group">
+          <input v-model="mail" type="email" id="email" placeholder=" " required />
+          <label for="email">Email</label>
+        </div>
+        <div class="form-group">
+          <input v-model="password" type="password" id="password" placeholder=" " required />
+          <label for="password">Mot de passe</label>
+        </div>
+        <button @click="connection()" class="login-button">Se connecter</button>
+        <div class="register"><RouterLink to="/inscription">Pas encore de compte ? Inscrivez-vous</RouterLink></div>
+      </form>
+    </div>
+    <FooterComponent />
+  </div>
+</template>
 
 <style scoped>
 .register {
