@@ -15,6 +15,7 @@ export default {
     Tooltip,
     HeaderComponent,
     FooterComponent,
+
 },
   data() {
     return {
@@ -60,7 +61,7 @@ export default {
     }
   },
   created() {
-
+    ws.connect('ws://localhost:5200')
 
     this.$api.get('/series')
         .then(response => response.json())
