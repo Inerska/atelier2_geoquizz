@@ -36,6 +36,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, nextTick } from 'vue'
 import * as L from 'leaflet'
+import { ws } from '@/utils/WebSocketService'
 
 export default defineComponent({
   setup() {
@@ -53,7 +54,7 @@ export default defineComponent({
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy2.jpg' },
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy3.jpg' },
       { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy4.jpg' },
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy5.jpg' },
+      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy5.jpg' }
     ])
     const actualRound = ref(roundsData.value.shift())
     const originalPosition = actualRound.value.coords as L.LatLngExpression
@@ -63,6 +64,10 @@ export default defineComponent({
     const map = ref(null)
 
     onMounted(() => {
+      ws.connect('ws://localhost:5200')
+
+      ws.sendMessage('newGame')
+
       map.value = L.map('map').setView(initialCenter.value, 13).setMinZoom(12)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -78,28 +83,27 @@ export default defineComponent({
       })
     })
 
-const nextRound = () => {
+    const nextRound = () => {
       if (roundsData.value.length > 0 && roundNumber.value < 10) {
-        actualRound.value = roundsData.value.shift(); // Retire le premier élément du tableau
-        imageUrl.value = actualRound.value.imageUrl; // Met à jour l'URL de l'image
-        roundNumber.value += 1; // Incrémente le numéro de round
+        actualRound.value = roundsData.value.shift() // Retire le premier élément du tableau
+        imageUrl.value = actualRound.value.imageUrl // Met à jour l'URL de l'image
+        roundNumber.value += 1 // Incrémente le numéro de round
 
         map.value.removeLayer(currentMarker.value as L.Marker)
 
-        currentMarker.value = null;
-        showPopup.value = false;
-        score.value = 0;
-        distanceBtwPoints.value = 0;
+        currentMarker.value = null
+        showPopup.value = false
+        score.value = 0
+        distanceBtwPoints.value = 0
 
         // Met à jour la carte avec les nouvelles coordonnées
-        map.value.setView(actualRound.value.coords, 13);
+        map.value.setView(actualRound.value.coords, 13)
         // Assurez-vous de nettoyer la carte des marqueurs précédents si nécessaire
-
       } else {
         // Gérer la fin du jeu ou la réinitialisation complète ici
-        console.log("Fin du jeu ou limite des rounds atteinte.");
+        console.log('Fin du jeu ou limite des rounds atteinte.')
       }
-    };
+    }
 
     const calculateScore = (distance: number) => {
       const maxDistance = 1000 //5 km
@@ -139,7 +143,7 @@ const nextRound = () => {
 
           distanceBtwPoints.value = Math.round(userPosition.distanceTo(originalPosition))
           score.value = calculateScore(distanceBtwPoints.value) // Calculer le score
-          totalScore.value = totalScore.value + score.value;
+          totalScore.value = totalScore.value + score.value
 
           popupMap.invalidateSize()
         })
