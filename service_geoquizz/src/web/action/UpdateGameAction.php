@@ -56,21 +56,27 @@ final class UpdateGameAction extends AbstractAction
 
         if ($playedGame->getStatus() === 2) {
             $profile = $playedGame->getProfile();
-            $profile->setSavedGames(array_filter($profile->getSavedGames(), static fn($game) => $game->getId() !== $playedGame->getId()));
+
+            $profile->addSavedGame($playedGame);
         }
 
         if ($playedGame->getStatus() === 1) {
             $profile = $playedGame->getProfile();
 
-            $gameId = $playedGame->getGameId();
-            $game = $this->entityManager->find(Game::class, $gameId);
+            $game = $playedGame->getGame();
 
-            $profile->setActualGame($game);
+            if (!$game) {
+                $response->getBody()->write(json_encode(['error' => 'Game not found'], JSON_THROW_ON_ERROR));
+                return $response->withStatus(404);
+            }
+
+            $profile->setActualGame($playedGame);
         }
 
         try {
             $this->entityManager->persist($playedGame);
             $this->entityManager->flush();
+
         } catch (Exception $e) {
             $response->getBody()->write(json_encode(['error' => 'Could not update PlayedGame'], JSON_THROW_ON_ERROR));
 

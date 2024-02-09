@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\InverseJoinColumn;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
@@ -22,15 +27,28 @@ class Profile
     #[Column]
     private string $username;
 
-    #[Column(nullable: true), OneToOne(targetEntity: 'Game')]
-    private ?Game $actualGame = null;
+    #[OneToOne(mappedBy: 'actualGame', targetEntity: PlayedGame::class)]
+    #[JoinColumn(name: 'actualgame_id', referencedColumnName: 'id', unique: false, nullable: true)]
+    private ?PlayedGame $actualGame;
 
-    #[Column(name: 'savedGames'), OneToMany(targetEntity: 'PlayedGame')]
-    private array $savedGames;
+    #[JoinTable(name: 'profile_savedgames')]
+    #[JoinColumn(name: 'profile_id', referencedColumnName: 'id')]
+    #[InverseJoinColumn(name: 'playedgame_id', referencedColumnName: 'id')]
+    #[ManyToMany(targetEntity: PlayedGame::class)]
+    private Collection $savedGames;
+
 
     public function __construct()
     {
-        $this->savedGames = [];
+        $this->savedGames = new ArrayCollection();
+    }
+
+    public function addSavedGame(PlayedGame $playedGame): void
+    {
+        if (!$this->savedGames->contains($playedGame)) {
+            $this->savedGames->add($playedGame);
+            $playedGame->setProfile($this);
+        }
     }
 
     /**
@@ -66,34 +84,35 @@ class Profile
     }
 
     /**
-     * @return Game|null
+     * @return Game
      */
-    public function getActualGame(): ?Game
+    public function getActualGame(): ?PlayedGame
     {
         return $this->actualGame;
     }
 
     /**
-     * @param Game|null $actualGame
+     * @param Game $actualGame
      */
-    public function setActualGame(?Game $actualGame): void
+    public function setActualGame(?PlayedGame $actualGame): void
     {
         $this->actualGame = $actualGame;
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getSavedGames(): array
+    public function getSavedGames(): Collection
     {
         return $this->savedGames;
     }
 
     /**
-     * @param array $savedGames
+     * @param Collection $savedGames
      */
-    public function setSavedGames(array $savedGames): void
+    public function setSavedGames(Collection $savedGames): void
     {
         $this->savedGames = $savedGames;
     }
+
 }
