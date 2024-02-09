@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { User } from '@/models/User';
+import { PartialAuthUser } from '../utils/types';
 
 export const useUserStore = defineStore('userStore', {
     state() {
         return {
-            user: null as User | null,
+            user: null as PartialAuthUser | null,
         }
     },
     getters: {
@@ -13,7 +13,7 @@ export const useUserStore = defineStore('userStore', {
         }
     },
     actions: {
-        loginUser(user) {
+        loginUser(user: PartialAuthUser) {
             this.user = user;
         },
         logoutUser() {
