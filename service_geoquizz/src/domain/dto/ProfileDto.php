@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace geoquizz\service\domain\dto;
 
+use AllowDynamicProperties;
 use geoquizz\service\infrastructure\persistence\entity\Profile;
 use geoquizz\service\infrastructure\persistence\entity\Game;
 use geoquizz\service\infrastructure\persistence\entity\PlayedGame;
 
-class ProfileDto
+#[AllowDynamicProperties] class ProfileDto
 {
     public int $id;
     public string $username;
@@ -19,6 +20,19 @@ class ProfileDto
     {
         $this->id = $profile->getId();
         $this->username = $profile->getUsername();
+        $this->scoreTotal = array_reduce($profile->getSavedGames()->toArray(), function ($carry, $playedGame) {
+            if ($playedGame instanceof PlayedGame) {
+                return $carry + $playedGame->getScore();
+            }
+            return $carry;
+        }, 0);
+
+        $this->highScore = array_reduce($profile->getSavedGames()->toArray(), function ($carry, $playedGame) {
+            if ($playedGame instanceof PlayedGame) {
+                return max($carry, $playedGame->getScore());
+            }
+            return $carry;
+        }, 0);
 
         if ($profile->getActualGameId() !== null) {
             $this->actualGame = [
@@ -32,6 +46,7 @@ class ProfileDto
                     'id' => $playedGame->getId(),
                     'score' => $playedGame->getScore(),
                     'time' => $playedGame->getTime(),
+
                 ];
             }
         }

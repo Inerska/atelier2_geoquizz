@@ -12,15 +12,15 @@
       <h1>{{ username }}</h1>
       <div class="column-stats">
         <div class="data-stats">
-          <span class="value" id="nbGame">10</span>
-          <p class="name">Partie</p>
+          <span class="value" id="nbGame">{{ gamesCount }}</span>
+          <p class="name">Partie.s</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">354</span>
+          <span class="value" id="nbGame">{{ totalScore }}</span>
           <p class="name">Score Total</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">80</span>
+          <span class="value" id="nbGame">{{ highScore }}</span>
           <p class="name">High score</p>
         </div>
       </div>
@@ -111,7 +111,9 @@ export default {
       console.log(resp.data)
       this.username = resp.data.username
       this.actualGame = resp.data.actualGame
-      this.playedGames = resp.data.savedGames
+      this.gamesCount = resp.data.savedGames.length
+      this.totalScore = resp.data.scoreTotal
+      this.highScore = resp.data.highScore
     }).catch(err => {
       console.log(err)
     })
@@ -128,6 +130,9 @@ export default {
       ],
       selectedBackground: '',
       username: "",
+      totalScore: -1,
+      highScore: -1,
+      gamesCount: -1,
       playedGames : [],
       actualGame : null
     }
