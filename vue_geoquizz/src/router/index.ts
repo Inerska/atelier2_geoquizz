@@ -4,6 +4,7 @@ import SerieVue from "@/views/SerieVue.vue";
 import ProfileVue from "@/views/ProfileVue.vue";
 import LoginVue from "@/views/LoginVue.vue";
 import GameVue from "@/views/GameVue.vue";
+import RegisterVue from "@/views/RegisterVue.vue";
 
 const router = createRouter({
     //@ts-ignore
@@ -23,6 +24,11 @@ const router = createRouter({
             path: '/connexion',
             name: 'login',
             component: LoginVue
+        },
+        {
+            path: '/inscription',
+            name: 'register',
+            component: RegisterVue
         },
         {
             path: '/profil',

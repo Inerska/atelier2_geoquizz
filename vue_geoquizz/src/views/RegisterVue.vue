@@ -1,9 +1,32 @@
+<template>
+  <div class="login-page">
+    <HeaderComponent />
+    <div class="login-container">
+      <div class="login-form">
+        <h2>Inscription</h2>
+        `<div v-if="errorMessage" class="error">{{errorMessage}}</div>
+        <div class="form-group">
+          <input v-model="mail" type="email" id="email" placeholder=" " required />
+          <label for="email">Email</label>
+        </div>
+        <div class="form-group">
+          <input v-model="password" type="password" id="password" placeholder=" " required />
+          <label for="password">Mot de passe</label>
+        </div>
+        <div class="form-group">
+          <input v-model="password2" type="password" id="password" placeholder=" " required />
+          <label for="password">Confirmer le mot de passe</label>
+        </div>
+        <button @click="register()" class="login-button">S'inscrire</button>
+      </div>
+    </div>
+    <FooterComponent />
+  </div>
+</template>
+
 <script lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
-import { mapState } from 'pinia'
-import { useUserStore } from '@/store/user'
-
 
 export default {
   components: {
@@ -14,70 +37,39 @@ export default {
     return {
       mail : "",
       password : "",
-      errorMessage : ""
+      password2 : "",
+      errorMessage : null
     }
   },
   methods: {
-    connection() {
-      console.log('Connexion !')
-      this.$api.post('/login', {
+    register() {
+      console.log('Inscription !')
+      this.$api.post('/register', {
         mail: this.mail,
-        password: this.password
+        password: this.password,
+        confirm_password: this.password2
       }).then(resp => {
-        const userStore = useUserStore();
-        console.log("resp.data dans la réponse ",resp.data)
-        userStore.loginUser({
-          accessToken: resp.data.refreshToken,
-          refreshToken: resp.data.accessToken,
-        })
-        console.log("user dans le UserStore ", userStore.user)
+        this.errorMessage = null;
+        console.log(resp.data)
+        this.$router.push('/')
       }).catch (err => {
-        console.log(err)
+        console.log(err.response.data)
+        this.errorMessage = err.response.data.message
       })
     }
-  },
-  created() {
-    console.log("user dans le created ", this.user)
   }
 }
 </script>
 
-<template>
-  <div class="login-page">
-    <HeaderComponent />
-    <div class="login-container">
-      <div>Test du store :   {{user}} </div>
-      <form class="login-form" @submit.prevent="onSubmit">
-        <h2>Connexion</h2>
-        <div class="form-group">
-          <input v-model="mail" type="email" id="email" placeholder=" " required />
-          <label for="email">Email</label>
-        </div>
-        <div class="form-group">
-          <input v-model="password" type="password" id="password" placeholder=" " required />
-          <label for="password">Mot de passe</label>
-        </div>
-        <button @click="connection()" class="login-button">Se connecter</button>
-        <div class="register"><RouterLink to="/inscription">Pas encore de compte ? Inscrivez-vous</RouterLink></div>
-      </form>
-    </div>
-    <FooterComponent />
-  </div>
-</template>
+<style scoped lang="scss">
 
-<style scoped>
-.register {
-  font-size: .8em;
+.error {
+  color: black;
+  background-color: lighten(red, 30%);
+  padding: 1em;
   text-align: center;
-  color: grey;
-  text-decoration: underline;
-}
-
-
-<style scoped>
-h2,
-label {
-  color: #333 !important;
+  border-radius: 10px;
+  margin-bottom: 2em;
 }
 .form-group {
   position: relative;
@@ -99,7 +91,7 @@ label {
   position: absolute;
   top: 12px;
   left: 10px;
-  color: #000000;
+  color: #999;
   transition: all 0.2s ease;
   background-color: white;
   padding: 0 5px;
