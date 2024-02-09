@@ -31,10 +31,13 @@ export default {
         mail: this.mail,
         password: this.password
       }).then(resp => {
+        console.log(resp.data)
         this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
         this.$router.push('/')
       }).catch(err => {
         console.log(err)
+        this.errorMessage = err.response.data.message
+
       })
     }
   }
@@ -47,6 +50,8 @@ export default {
     <div class="login-container">
       <form class="login-form" @submit.prevent="onSubmit">
         <h2>Connexion</h2>
+        <div v-if="errorMessage" class="error">{{errorMessage}}</div>
+
         <div class="form-group">
           <input v-model="mail" type="email" id="email" placeholder=" " required />
           <label for="email">Email</label>
@@ -63,7 +68,16 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+
+.error {
+  color: black;
+  background-color: lighten(red, 30%);
+  padding: 1em;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
 .register {
   font-size: .8em;
   text-align: center;

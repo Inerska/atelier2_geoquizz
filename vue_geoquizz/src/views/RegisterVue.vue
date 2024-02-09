@@ -58,6 +58,7 @@ export default {
         password: this.password,
         confirm_password: this.password2
       }).then(resp => {
+
         this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
         this.errorMessage = null;
         console.log(resp.data)

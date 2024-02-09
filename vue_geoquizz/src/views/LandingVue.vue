@@ -56,15 +56,25 @@ export default {
     }
   },
   created() {
-    console.log("user dans le created ", this.user)
+    this.$api.get('/games')
+        .then(resp => {
+          this.seriesList = resp.data.data
+        }).catch(err => {
+          console.log(err)
+        })
+
     this.$api.get('/series')
         .then(resp => {
           this.seriesList = resp.data.data
+        }).catch(err => {
+          console.log(err)
         })
 
     this.$api.get('/levels')
         .then(resp => {
           this.levelsList = resp.data.data
+        }).catch(err => {
+          console.log(err)
         })
 
   },
