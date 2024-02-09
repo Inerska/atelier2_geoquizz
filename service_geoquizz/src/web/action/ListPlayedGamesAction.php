@@ -35,11 +35,8 @@ final class ListPlayedGamesAction extends AbstractAction
 
         $playedGamesData = [];
         foreach ($playedGames as $playedGame) {
-            $gameId = $playedGame->getGameId();
-            $game = $this->entityManager->find(Game::class, $gameId);
-            if (!$game) {
-                continue;
-            }
+
+            $game = $playedGame->getGame();
 
             $photo = json_decode($game->getPhotos(), false, 512, JSON_THROW_ON_ERROR);
             $photo = $photo[0];
