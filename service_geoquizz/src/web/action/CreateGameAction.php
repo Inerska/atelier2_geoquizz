@@ -60,15 +60,8 @@ final class CreateGameAction extends AbstractAction
         $game->setIsPublic($is_public);
 
         try {
-            $existingPlayedGame = $this->entityManager->getRepository(PlayedGame::class)
-                ->findOneBy(['profile' => $profile_id, 'game' => $game->getId()]);
-
-            if ($existingPlayedGame !== null) {
-                $response->getBody()->write(json_encode(['message' => 'Game already played by this profile'], JSON_THROW_ON_ERROR));
-                return $response->withStatus(409);
-            }
-
             $playedGame = new PlayedGame();
+
             $profile = $this->entityManager->find(Profile::class, $profile_id);
 
             if ($profile === null) {
@@ -79,6 +72,7 @@ final class CreateGameAction extends AbstractAction
             $this->entityManager->flush();
 
             $playedGame->setProfile($profile);
+
             $playedGame->setStatus(0);
             $playedGame->setGame($game);
             $playedGame->setScore(0);
@@ -97,5 +91,9 @@ final class CreateGameAction extends AbstractAction
         }
 
         $response->getBody()->write(json_encode(['id' => $playedGame->getId()], JSON_THROW_ON_ERROR));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201);
     }
+}
