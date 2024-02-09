@@ -11,6 +11,7 @@ use geoquizz\auth\domain\service\TokenManagementServiceInterface;
 use geoquizz\auth\infrastructure\service\AuthenticationService;
 use geoquizz\auth\infrastructure\service\RequestBodyValidatorService;
 use geoquizz\auth\infrastructure\service\TokenManagementService;
+use GuzzleHttp\Client;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -41,8 +42,13 @@ return function ($container) {
     $container->set(AuthenticationServiceInterface::class, function () use ($container) {
         return new AuthenticationService(
             $container->get('em'),
-            $container->get(TokenManagementServiceInterface::class)
+            $container->get(TokenManagementServiceInterface::class),
+            $container->get('http_client')
         );
+    });
+
+    $container->set('http_client', function () {
+        return new Client();
     });
 
     $container->set(RequestBodyValidatorServiceInterface::class, function () use ($container) {

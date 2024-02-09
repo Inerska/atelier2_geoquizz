@@ -20,8 +20,8 @@
           <p class="name">Score</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">6</span>
-          <p class="name">Level</p>
+          <span class="value" id="nbGame">12000</span>
+          <p class="name">High score</p>
         </div>
       </div>
     </div>
@@ -30,12 +30,11 @@
         <h2 class="title">Historique des parties</h2>
         <div class="game-container">
           <!-- @TODO : Boucler les données depuis la DB -->
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
-          <Game serie="2" photo="../assets/img/Nancy.jpg" level="2" />
+          <Game serie="Nancy" photo="/img/Nancy.jpg" level="" />
+          <Game serie="Nancy" photo="/img/Nancy2.jpg" level="2" />
+          <Game serie="Nancy" photo="/img/Nancy3.jpg" level="2" />
+          <Game serie="Nancy" photo="/img/Nancy4.jpg" level="2" />
+          <Game serie="Nancy" photo="/img/Nancy5.jpg" level="2" />
         </div>
       </div>
     </main>
@@ -106,10 +105,10 @@ export default {
       avatars: ['/avatar.svg', '/avatar.svg', '/avatar.svg', '/avatar.svg', '/avatar.svg'],
       selectedAvatar: '',
       backgrounds: [
-        '/src/assets/img/Nancy.jpg',
-        '/src/assets/img/Nancy.jpg',
-        '/src/assets/img/Nancy.jpg',
-        '/src/assets/img/Nancy.jpg'
+        '/img/Nancy.jpg',
+        '/img/Nancy2.jpg',
+        '/img/Nancy3.jpg',
+        '/img/Nancy4.jpg'
       ],
       selectedBackground: ''
     }
@@ -127,155 +126,185 @@ export default {
 </script>
 
 <style>
-body {
-  overflow-y: auto;
+
+/* Importation de Google Fonts pour une typographie plus moderne */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+p, span, h1, h2, h3, label {
+  color: #fff !important;
 }
 .form-group {
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
+
 .form-group label {
-  margin-bottom: 5px;
-  font-size: 18px;
-  color: #000;
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #000;
 }
+
 .edit-container {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
 }
+
 .background-selection {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
 }
-.background-image {
-  width: 100px; 
-  height: 60px; 
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s;
+
+.background-image, .avatar-image {
+    width: 100px; 
+    height: 60px; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
-.background-image:hover {
-  transform: scale(1.1);
+
+.background-image:hover, .avatar-image:hover {
+    transform: scale(1.1);
 }
-.selected-background {
-  border: 2px solid rgb(193, 48, 255); 
+
+.selected-background, .selected-avatar {
+    border: 2px solid rgb(193, 48, 255); 
 }
+
 .avatar-selection {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
+
 .avatar-image {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: transform 0.2s;
-  margin: 10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 10px;
 }
-.avatar-image:hover {
-  transform: scale(1.1);
-}
-.selected-avatar {
-  border: 2px solid blue; 
-}
+
 .parent-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
 .small-container {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  width: auto;
-  min-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: auto;
+    min-width: 500px;
 }
+
 .small-container .game-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
 }
-.small-container .game-container .game-card {
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+
 .stats {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
 }
+
 .stats .column-stats {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 0 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 20px;
 }
+
 .stats .column-stats .data-stats {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 25px;
 }
-.stats .column-stats .data-stats .value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #000;
-}
-.stats .column-stats .data-stats .name {
-  font-size: 18px;
-  font-weight: 400;
-  color: #000;
-}
-.container {
-  display: flex;
-  flex-direction: column;
+
+.stats .column-stats .data-stats .value, .stats .column-stats .data-stats .name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
 }
 .banner {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
+    height: 250px;
+
 }
+
 .banner .img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  filter: grayscale(50%);
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    filter: grayscale(50%);
 }
+
 .banner .gradient-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, transparent, rgba(68, 68, 68, 0.4));
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, rgba(68, 68, 68, 0.4));
+    z-index: 1;
 }
+
 .banner .user {
-  display: flex;
-  position: absolute;
-  bottom: -65px;
-  left: 50%;
-  transform: translate(-50%, 0);
-  z-index: 2;
+    position: absolute;
+    bottom: -65px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 2;
 }
+
 .banner .avatar {
-  border: 10px solid #fff;
-  height: 130px;
-  width: 130px;
-  border-radius: 50%;
-  bottom: 0;
+    border: 10px solid #fff;
+    height: 130px;
+    width: 130px;
+    border-radius: 50%;
 }
-.banner h1 {
-  color: #fff;
-  margin: 0;
-  padding: 10px;
-  font-size: 32px;
-  font-weight: 700;
-  text-shadow: 4px 4px 8px #000000;
+
+.btn-primary {
+    background-color: #4e3d67;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #675081;
+}
+
+@media (max-width: 768px) {
+    .small-container, .game-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+  
+    .stats .column-stats {
+        flex-direction: column;
+    }
+}
+
+.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+    color: #333;
+}
+
+.form-control:focus {
+    border-color: #6658d3;
+    box-shadow: 0 0 5px rgba(102,88,211,.2);
 }
 </style>
+
