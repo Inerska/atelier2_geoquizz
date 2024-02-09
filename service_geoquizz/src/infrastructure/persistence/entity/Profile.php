@@ -35,6 +35,32 @@ class Profile
     #[InverseJoinColumn(name: 'playedgame_id', referencedColumnName: 'id')]
     private Collection $savedGames;
 
+    public function getAvatarName(): string
+    {
+        return $this->avatar_name;
+    }
+
+    public function setAvatarName(string $avatar_name): void
+    {
+        $this->avatar_name = $avatar_name;
+    }
+
+    public function getWallpaperName(): string
+    {
+        return $this->wallpaper_name;
+    }
+
+    public function setWallpaperName(string $wallpaper_name): void
+    {
+        $this->wallpaper_name = $wallpaper_name;
+    }
+
+    #[Column]
+    private string $avatar_name;
+
+    #[Column]
+    private string $wallpaper_name;
+
     public function __construct()
     {
         $this->savedGames = new ArrayCollection();

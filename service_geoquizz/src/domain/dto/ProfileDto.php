@@ -18,6 +18,8 @@ use geoquizz\service\infrastructure\persistence\entity\PlayedGame;
 
     public function __construct(Profile $profile)
     {
+        $this->avatar = $profile->getAvatarName();
+        $this->wallpaper = $profile->getWallpaperName();
         $this->id = $profile->getId();
         $this->username = $profile->getUsername();
         $this->scoreTotal = array_reduce($profile->getSavedGames()->toArray(), function ($carry, $playedGame) {

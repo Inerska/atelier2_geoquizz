@@ -2,10 +2,10 @@
   <HeaderComponent />
   <div class="container">
     <div class="banner">
-      <img class="img" src="/img/Nancy.jpg" alt="banner" />
+      <img class="img" :src="wallpaper" alt="Background" />
       <div class="gradient-overlay"></div>
       <div class="user">
-        <img class="avatar" src="/avatar.svg" />
+        <img class="avatar" :src="avatar" alt="Avatar" />
       </div>
     </div>
     <div class="stats">
@@ -91,6 +91,7 @@ import FooterComponent from '@/components/FooterComponent.vue'
 import Game from '@/components/Game.vue'
 import { useUserStore } from '@/store/user'
 import game from "../components/Game.vue";
+import {toast} from "vue3-toastify";
 
 export default {
   computed: {
@@ -120,13 +121,21 @@ export default {
       this.gamesCount = response.data.gamesCount
       this.totalScore = response.data.scoreTotal
       this.highScore = response.data.highScore
+      this.avatar = response.data.avatar
+      this.wallpaper = response.data.wallpaper
     }).catch(err => {
       console.log(err)
     })
   },
   data() {
     return {
-      avatars: ['/avatar.svg', '/avatar.svg', '/avatar.svg', '/avatar.svg', '/avatar.svg'],
+      avatars: [
+          '/avatars/frank.png',
+          '/avatars/fred.png',
+          '/avatars/josh.png',
+          '/avatars/marie.png',
+          '/avatars/josiane.png',
+          ],
       selectedAvatar: '',
       backgrounds: [
         '/img/Nancy.jpg',
@@ -134,6 +143,8 @@ export default {
         '/img/Nancy3.jpg',
         '/img/Nancy4.jpg'
       ],
+      avatar: '',
+      wallpaper: '',
       selectedBackground: '',
       username: "",
       totalScore: -1,
@@ -146,9 +157,39 @@ export default {
   methods: {
     selectAvatar(avatar: string) {
       this.selectedAvatar = avatar
+
+      toast.info("Avatar sélectionné")
+      this.avatar = avatar
+
+      this.$api.put('/profiles/' + useUserStore().getProfileId, {
+        avatar: avatar
+      }).then(response => {
+        console.log(response)
+      }).catch(err => {
+        console.log(err)
+      })
+
+      // refresh data
+
+      // put request to update the avatar
     },
     selectBackground(background: string) {
       this.selectedBackground = background
+
+      toast("Background sélectionné")
+
+      // put request to update the background
+
+      this.wallpaper = background
+
+      this.$api.put('/profiles/' + useUserStore().getProfileId, {
+        background: background
+      }).then(response => {
+        console.log(response)
+        this.wallpaper = background
+      }).catch(err => {
+        console.log(err)
+      })
     },
     saveProfile() {}
   }

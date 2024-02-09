@@ -28,6 +28,18 @@ final class CreateProfileAction extends AbstractAction
         $profile = new Profile();
         $profile->setUsername($data['username']);
 
+        if (!isset($data['avatar'])) {
+            $profile->setAvatarName('default_avatar');
+        } else {
+            $profile->setAvatarName($data['avatar']);
+        }
+
+        if (!isset($data['wallpaper'])) {
+            $profile->setWallpaperName('default_wallpaper');
+        } else {
+            $profile->setWallpaperName($data['wallpaper']);
+        }
+
         $profile->setActualGameId(null);
 
         try {
