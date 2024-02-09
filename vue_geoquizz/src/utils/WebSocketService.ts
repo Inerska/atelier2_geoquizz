@@ -3,15 +3,17 @@ import 'vue3-toastify/dist/index.css';
 
 class WebSocketService {
     private ws: WebSocket | null = null;
-    private url: string = '';
+    private url: string = 'ws://localhost:5200';
     private reconnectAttempts: number = 1;
     private maxReconnectAttempts: number = 3;
     private reconnectInterval: number = 5000;
 
-    connect(url: string) {
-        this.url = url;
+    init() {
+        this.connect();
+    }
 
-        this.ws = new WebSocket(url);
+    private connect() {
+        this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
             console.log('Connexion WebSocket établie.');
@@ -28,7 +30,10 @@ class WebSocketService {
             console.error('Erreur WebSocket:', error);
 
             toast.error(`Erreur WebSocket. Tentative de reconnexion... ${this.reconnectAttempts}/${this.maxReconnectAttempts}`, {
-                autoClose: 3000,
+                autoClose: 5000,
+                closeButton: true,
+                theme: 'light',
+                pauseOnHover: false,
                 position: 'bottom-right'
             });
             this.tryReconnect();
@@ -38,6 +43,15 @@ class WebSocketService {
             console.log('Message reçu:', event.data);
             if (event.data === 'newGame') {
                 toast.info("Quelqu'un a lancé une partie !", {
+                    autoClose: 3000,
+                    closeButton: true,
+                    theme: 'light',
+                    pauseOnHover: false,
+                    position: 'bottom-right'
+                });
+            }
+            if (event.data === 'endGame') {
+                toast.info("Quelqu'un a finit une partie !", {
                     autoClose: 3000,
                     closeButton: true,
                     theme: 'light',
@@ -83,7 +97,7 @@ class WebSocketService {
 
         console.log(`Tentative de reconnexion WebSocket... (${this.reconnectAttempts + 1})`);
         setTimeout(() => {
-            this.connect(this.url);
+            this.connect();
             this.reconnectAttempts++;
             if (callback) {
                 callback();
