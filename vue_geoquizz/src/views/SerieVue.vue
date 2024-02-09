@@ -3,6 +3,7 @@ Nv v
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
 import HeaderComponent from "@/components/HeaderComponent.vue";
+
 export default {
   components: {
     Game,
@@ -25,8 +26,9 @@ export default {
     this.$api.get('/levels').then(resp => {
       this.levelsList = resp.data.data
     })
-    this.$api.get('/series/' + this.$route.params.id ).then(resp => {
+    this.$api.get('/series/' + this.$route.params.id).then(resp => {
       this.serie = resp.data.data
+
       const map = L.map('map').setView(this.serie.cityCenter.split(","), 13).setMinZoom(12)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -38,13 +40,31 @@ export default {
       map.zoomControl.remove();
       map.scrollWheelZoom.disable()
     })
-    //get les public games qui sont sur la serie là et les afficher et les stocker dans gamesList
+    this.$api.get('games').then(resp => {
+      resp.data.forEach((game) => {
+        if (game.serie_id == this.$route.params.id || game.isPublic) {
+          this.gamesList.push(game)
+        }
+      })
+    })
+//get les public games qui sont sur la serie là et les afficher et les stocker dans gamesList
+},
+methods: {
+  createGame() {
+    //console.log('createGame')
+    this.$api.post('/games', {
+      serie_id: this.$router.params.id,
+      level_id: this.newGame.level_id,
+      profile_id: this.getProfileId,
+      is_public: this.newGame.public
+    }).then(resp => {
+      //console.log("createGame, id du playedGame ", resp.data)
+      this.$router.push(`/jeu/${resp.data.id}`)
+    }).catch(err => {
+      console.log(err)
+    })
   },
-  methods: {
-    createGame() {
-      //Create une game avec cette serie et un level à choisir
-    }
-  }
+}
 }
 </script>
 
@@ -69,7 +89,9 @@ export default {
             <option value="" selected disabled>Choisir un niveau</option>
             <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
           </select>
-          <button class="new-game-button">Lancer</button>
+          <input v-model="newGame.public" type="checkbox" id="public" name="public" checked/>
+          <label for="public">Publique ? </label>
+          <button @click="createGame()" class="new-game-button">Lancer</button>
         </div>
         <div class="info">
           Dans GeoQuizz, tu devras localiser des lieux sur une carte à partir d'images !
@@ -100,10 +122,12 @@ export default {
     display: flex;
     align-items: center;
     gap: .5em;
+
     h1 {
       font-size: 2em;
       margin: 0;
     }
+
     img {
       width: 1.8em;
       margin-right: 0.5em;
@@ -180,6 +204,14 @@ export default {
   //width: fit-content;
   margin-left: auto;
   margin-right: auto;
+}
+
+.public-games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+  grid-row-gap: 1em;
+  grid-column-gap: 1em;
+  padding: 2em;
 }
 
 
