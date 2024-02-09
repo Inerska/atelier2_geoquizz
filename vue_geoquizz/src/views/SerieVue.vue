@@ -1,5 +1,5 @@
 Nv v
-<script>
+<script lang="ts">
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
 import HeaderComponent from "@/components/HeaderComponent.vue";
@@ -35,7 +35,7 @@ export default {
       }).addTo(map)
 
       map.dragging.disable();
-      map.zoomControl.disable();
+      map.zoomControl.remove();
       map.scrollWheelZoom.disable()
     })
     //get les public games qui sont sur la serie là et les afficher et les stocker dans gamesList

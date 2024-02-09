@@ -29,6 +29,7 @@ export type Game = {
     date: string;
     status: 'archived' | 'in_progress' | 'finished';
     public: boolean;
+    photos: Photo[];
 }
 export type CurrentGame = {
     game: Game;
@@ -52,4 +53,9 @@ export type PartialAuthUser = {
 }
 export type GameProgression = {
     status: 'in_progress' | 'pause' | 'inter_serie' | 'finished';
+}
+export type AxiosResponseGame = {
+    data: {
+        game: Game;
+    }
 }

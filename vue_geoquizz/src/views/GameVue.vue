@@ -32,37 +32,39 @@
 <script lang="ts">
 import * as L from 'leaflet'
 import { ws } from '@/utils/WebSocketService'
-import { GameProgression } from '@/utils/types' // @TODO: à utiliser pour gerer et bloquer certains éléments du jeu
+import { GameProgression, User,  AxiosResponseGame, Game, Photo, CurrentGame, Serie} from '@/utils/types' // @TODO: à utiliser pour gerer et bloquer certains éléments du jeu
+
 export default {
   data() {
     return {
-      game: null,
-      photos: null,
-      currentMarker: null,
+      game: null as Game,
+      photos: [] as Photo[],
+      currentMarker: null as L.LatLngExpression,
       showPopup: false,
       distanceBtwPoints: 0,
       totalScore: 0,
       score: 0,
       roundNumber: 0,
       imageUrl: '',
-      initialCenter: [48.693623, 6.183672],
+      initialCenter: [48.693623, 6.183672] as L.LatLngExpression,
       gameProgression: {} as GameProgression,
-      roundsData: [],
-      actualRound: null,
+      roundsData: [] as Photo[],
+      actualRound: null as CurrentGame,
       originalPosition: [],
       map: null
     }
   },
   created() {
     //TODO: récup aussi le inital center avec directus serie CityCenter
-    this.$api.get(`games/${this.$route.params.id}`).then( resp => {
+    this.$api.get(`games/${this.$route.params.id}`).then((resp: AxiosResponseGame) => {
       console.log(" données de jeu ",resp.data)
-      this.game = resp.data;
+      this.game = resp.data.game as Game;
+      console.log(this.game)
       this.photos = JSON.parse(this.game.photos)
       //this.game.photos.replace("[",'')
       //this.game.photos.replace("]",'')
-      this.photos.forEach((photo) => {
-        this.$api.get(`/photos/${photo}`).then( resp2 => {
+      this.photos.forEach((photo: Photo) => {
+        this.$api.get(`/photos/${photo.id}`).then( resp2 => {
           //console.log("resp2 ", resp2);
           const coordinates = resp2.data.data.coordinates.split(',').map(function(coord) {
             return parseFloat(coord);
@@ -145,7 +147,6 @@ export default {
           this.totalScore += this.score
 
           const popupMap = L.map('popupMap', {
-            center: userPosition,
             layers: [
               L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; OpenStreetMap contributors'
@@ -173,7 +174,6 @@ export default {
   }
 }
 </script>
-<style scoped>
 
 <style scoped>
 body {
