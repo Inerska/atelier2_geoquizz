@@ -29,7 +29,6 @@
       <div class="small-container">
         <h2 class="title">Historique des parties</h2>
         <div v-if="playedGames" class="game-container">
-          <!-- @TODO : Boucler les données depuis la DB -->
           <Game v-for="game in playedGames" :serie="game.serie" :photo="game.photo" :level="game.level" :key="game.id" />
         </div>
         <div v-else>Vous n'avez pas encore joué de partie Geoquizz, lancez-vous maintenant !</div>
@@ -90,25 +89,25 @@
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import Game from '@/components/Game.vue'
-import { mapState, mapActions } from 'pinia'
 import { useUserStore } from '@/store/user'
 
 export default {
+
   components: {
     HeaderComponent,
     FooterComponent,
     Game
   },
-  computed : {
-    ...mapState(useUserStore, ['getProfileId'])
-  },
   created() {
+
+    const userStore = useUserStore()
+
     console.log("user dans le created ", this.user)
-    this.$api.get(`/profiles/${this.getProfileId}`).then(resp => {
+    this.$api.get(`/profiles/${userStore.getProfileId}`).then(resp => {
       console.log(resp.data)
       this.username = resp.data.username
       this.actualGame = resp.data.actualGame
-      this.playedGames = resp.data.playedGames
+      this.playedGames = resp.data.savedGames
     }).catch(err => {
       console.log(err)
     })
@@ -174,8 +173,8 @@ p, span, h1, h2, h3, label {
 }
 
 .background-image, .avatar-image {
-    width: 100px; 
-    height: 60px; 
+    width: 100px;
+    height: 60px;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 0.3s ease;
@@ -186,7 +185,7 @@ p, span, h1, h2, h3, label {
 }
 
 .selected-background, .selected-avatar {
-    border: 2px solid rgb(193, 48, 255); 
+    border: 2px solid rgb(193, 48, 255);
 }
 
 .avatar-selection {
@@ -304,7 +303,7 @@ p, span, h1, h2, h3, label {
     .small-container, .game-container {
         grid-template-columns: repeat(2, 1fr);
     }
-  
+
     .stats .column-stats {
         flex-direction: column;
     }
