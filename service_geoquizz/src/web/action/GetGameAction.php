@@ -29,10 +29,9 @@ final class GetGameAction extends AbstractAction
 
         $gameDto = new GameDto($game);
 
-        /** @var PlayedGame $playedGame */
-        $playedGame = $this->entityManager
+       $playedGame = $this->entityManager
             ->getRepository(PlayedGame::class)
-            ->findBy(['game_id' => $game->getId()]);
+            ->findBy(['game' => $game, 'profile' => $args['profileId']]);
 
         if ($playedGame === null) {
             $response->getBody()->write(json_encode(['error' => 'PlayedGame not found'], JSON_THROW_ON_ERROR));
