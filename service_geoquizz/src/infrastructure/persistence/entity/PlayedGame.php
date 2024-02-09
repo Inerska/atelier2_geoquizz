@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
@@ -18,12 +19,15 @@ class PlayedGame
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column]
     private int $id;
-    #[Column]
-    #[OneToOne(targetEntity: 'Game')]
-    private int $game_id;
-    #[Column]
-    #[OneToOne(targetEntity: 'Profile')]
-    private int $profile_id;
+
+    #[ManyToOne(targetEntity: Game::class)]
+    #[JoinColumn(name: 'game_id', referencedColumnName: 'id', unique: false, nullable: false)]
+    private ?Game $game = null;
+
+    #[OneToOne(targetEntity: Profile::class)]
+    #[JoinColumn(name: 'profile_id', referencedColumnName: 'id', unique: false, nullable: false)]
+    private ?Profile $profile = null;
+
     #[Column]
     private int $score;
     #[Column]
@@ -34,24 +38,6 @@ class PlayedGame
     private int $advancement;
     #[Column]
     private int $status;
-    #[ManyToOne(targetEntity: Profile::class, inversedBy: 'savedGames')]
-    private ?Profile $profile = null;
-
-    /**
-     * @return Profile|null
-     */
-    public function getProfile(): ?Profile
-    {
-        return $this->profile;
-    }
-
-    /**
-     * @param Profile|null $profile
-     */
-    public function setProfile(?Profile $profile): void
-    {
-        $this->profile = $profile;
-    }
 
     /**
      * @return int
@@ -70,35 +56,35 @@ class PlayedGame
     }
 
     /**
-     * @return int
+     * @return Game|null
      */
-    public function getGameId(): int
+    public function getGame(): ?Game
     {
-        return $this->game_id;
+        return $this->game;
     }
 
     /**
-     * @param int $game_id
+     * @param Game|null $game
      */
-    public function setGameId(int $game_id): void
+    public function setGame(?Game $game): void
     {
-        $this->game_id = $game_id;
+        $this->game = $game;
     }
 
     /**
-     * @return int
+     * @return Profile|null
      */
-    public function getProfileId(): int
+    public function getProfile(): ?Profile
     {
-        return $this->profile_id;
+        return $this->profile;
     }
 
     /**
-     * @param int $profile_id
+     * @param Profile|null $profile
      */
-    public function setProfileId(int $profile_id): void
+    public function setProfile(?Profile $profile): void
     {
-        $this->profile_id = $profile_id;
+        $this->profile = $profile;
     }
 
     /**
@@ -180,4 +166,5 @@ class PlayedGame
     {
         $this->status = $status;
     }
+
 }

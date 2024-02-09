@@ -7,6 +7,7 @@ namespace geoquizz\service\web\action;
 use Doctrine\ORM\EntityManager;
 use Exception;
 use geoquizz\service\infrastructure\action\AbstractAction;
+use geoquizz\service\infrastructure\persistence\entity\Game;
 use geoquizz\service\infrastructure\persistence\entity\Profile;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,6 +27,7 @@ final class CreateProfileAction extends AbstractAction
 
         $profile = new Profile();
         $profile->setUsername($data['username']);
+
         $profile->setActualGame(null);
 
         try {

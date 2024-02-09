@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
-use AllowDynamicProperties;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
@@ -26,6 +24,7 @@ class Game
     private string $photos;
     #[Column]
     private bool $isPublic;
+
 
     /**
      * @return int

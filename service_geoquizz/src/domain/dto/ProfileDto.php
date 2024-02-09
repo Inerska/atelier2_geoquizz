@@ -20,7 +20,7 @@ class ProfileDto
         $this->id = $profile->getId();
         $this->username = $profile->getUsername();
 
-        if ($profile->getActualGame() instanceof Game) {
+        if ($profile->getActualGame() instanceof PlayedGame) {
             $this->actualGame = [
                 'id' => $profile->getActualGame()->getId(),
             ];
