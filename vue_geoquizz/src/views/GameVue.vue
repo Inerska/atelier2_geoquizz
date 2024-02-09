@@ -12,6 +12,9 @@
   <div class="confirm">
     <button :disabled="!currentMarker" @click="onSubmit">Confirmer</button>
   </div>
+  <div class="pause">
+    <button @click="pauseGame">Mettre en pause</button>
+  </div>
   <div class="player">
     <img class="avatar" src="/avatar.svg" />
     <div class="progression">
@@ -150,6 +153,7 @@ export default {
       }, 1000);
     },
     endRound() {
+      this.currentMarker = null;
       this.onSubmit();
     },
     nextRound() {
@@ -190,7 +194,7 @@ export default {
     onSubmit() {
       clearInterval(this.timerInterval);
 
-      if (this.currentMarker) {
+      if (this.currentMarker !== null) {
         this.showPopup = true
         this.$nextTick(() => {
           const userPosition = this.currentMarker.getLatLng()
@@ -270,7 +274,23 @@ export default {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   padding: 10px;
 }
-
+.pause {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+.pause button{
+  width: 200px;
+  cursor: pointer;
+  height: 60px;
+  background-color: #fff;
+  color: #000;
+  font-size: 1.2em;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
 body {
   margin: 0 !important;
 }
