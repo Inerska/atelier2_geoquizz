@@ -121,6 +121,16 @@ services:
     networks:
       - geoquizz_net
 
+  websocket_geoquizz:
+    build: .
+    container_name: "websocket_geoquizz"
+    ports:
+      - "5200:5200"
+    networks:
+      - geoquizz_net
+    volumes:
+      - ./gateway_nginx/reverse.conf:/etc/nginx/conf.d/default.conf
+
 networks:
   geoquizz_net:
     driver: bridge
