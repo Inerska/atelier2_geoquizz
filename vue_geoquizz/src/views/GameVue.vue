@@ -1,9 +1,9 @@
 <template>
   <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
   />
   <div class="container">
     <img :src="imageUrl" alt="Image dynamique" class="dynamic-image" />
@@ -16,8 +16,11 @@
     <img class="avatar" src="/avatar.svg" />
     <div class="progression">
       <p class="text">Score : {{ totalScore }}</p>
-      <p class="text">Round : {{ roundNumber }}/ {{totalRounds}}</p>
+      <p class="text">Round : {{ roundNumber }}/{{totalRounds}}</p>
     </div>
+  </div>
+  <div class="minutor">
+    <p>Temps restant : {{ timer }}</p>
   </div>
   <div v-if="showPopup" class="leaflet-popup">
     <div id="popupMap" class="popup-map-container"></div>
@@ -39,31 +42,29 @@ export default {
     return {
       game: null as Game,
       photos: [] as Photo[],
-      currentMarker: null as L.LatLngExpression,
+      currentMarker: [],
       showPopup: false,
       distanceBtwPoints: 0,
       totalScore: 0,
       score: 0,
       roundNumber: 0,
       imageUrl: '',
-      initialCenter: [48.693623, 6.183672] as L.LatLngExpression,
+      initialCenter: [],
       gameProgression: {} as GameProgression,
       roundsData: [] as Photo[],
       actualRound: null as CurrentGame,
       originalPosition: [],
       map: null,
-      totalRounds : 0
+      totalRounds : 0,
+      timer: "00:00"
     }
   },
+  // @ts-ignore // typescript n'arrive pas à lire correctement le fichier tsconfig
   async mounted() {
-
-    //TODO: récup aussi le inital center avec directus serie CityCenter
     await this.$api.get(`games/${this.$route.params.id}`).then((resp) => {
       console.log(" données de jeu ", resp.data)
       this.game = resp.data.game as Game;
       this.roundNumber = resp.data.advancement;
-      this.roundsData = this.roundsData.slice(resp.data.advancement - 1)
-      console.log("roundsData après slice ", this.roundsData)
       this.photos = JSON.parse(this.game.photos)
       this.totalRounds = this.photos.length;
       this.$api.get(`series/${this.game.serie_id}`).then(resp1 => {
@@ -83,7 +84,10 @@ export default {
           })
         })
       })
+      this.roundsData = this.roundsData.slice(resp.data.advancement)
+
       console.log( "rounds Data ", this.roundsData)
+
 
     }).catch(err => {
       console.log("erreur dans le get games ", err)
@@ -97,7 +101,9 @@ export default {
     }).catch (err => {
       console.log("erreur dans le changement de status", err)
     })
-    // this.ws.init();
+    this.startTimer(); // Démarre le minuteur pour le premier round
+
+    ws.init();
     console.log("this roundsData dans le mounted", this.roundsData);
     this.actualRound = this.roundsData.shift();
     console.log("actualRound", this.actualRound);
@@ -109,7 +115,7 @@ export default {
     this.map = L.map('map').setView(this.initialCenter, 13).setMinZoom(12)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map)
 
     this.map.on('click', (e) => {
@@ -118,18 +124,45 @@ export default {
       }
       this.currentMarker = L.marker(e.latlng).addTo(this.map)
     })
-    ws.sendMessage('newGame')
+    //ws.sendMessage('newGame')
   },
   methods: {
+    startTimer() {
+      let totalTime = 60; // 60 secondes pour 1 minute
+      this.timer = "01:00";
+      const interval = setInterval(() => {
+        const minutes = Math.floor(totalTime / 60);
+        const seconds = totalTime % 60;
+        // @ts-ignore // config pas à jour pour typescript
+        this.timer = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if (totalTime <= 0) {
+          clearInterval(interval);
+          this.endRound(); // Méthode pour gérer la fin du round
+        }
+        totalTime--;
+      }, 1000);
+    },
+    endRound() {
+      if (this.currentMarker) {
+        this.onSubmit(); // Simule la soumission si un marqueur a été placé
+      } else {
+        this.distanceBtwPoints = 0;
+        this.score = 0;
+        this.showPopup = true; // Affiche les résultats avec 0 distance et 0 score
+        this.nextRound(); // Passe au round suivant
+      }
+    },
     nextRound() {
+      this.startTimer();
       console.log("next ROund !", this.roundNumber)
       this.$api.put(`games/${this.$route.params.id}`, {
         score: this.totalScore,
         advancement: this.roundNumber
       })
       if (this.roundsData.length > 0 && this.roundNumber < 10) {
-        this.actualRound = this.roundsData.shift()
-        this.imageUrl = this.actualRound.imageUrl
+        this.actualRound = this.roundsData.shift();
+        this.imageUrl = this.actualRound.imageUrl;
+        this.originalPosition = this.actualRound.coords;
         this.roundNumber += 1
 
         if (this.currentMarker) this.map.removeLayer(this.currentMarker)
@@ -137,9 +170,16 @@ export default {
         this.showPopup = false
         this.score = 0
         this.distanceBtwPoints = 0
-        this.map.setView(this.actualRound.coords, 13)
+        this.map.setView(this.initialCenter, 13).setMinZoom(12)
       } else {
         console.log('Fin du jeu ou limite des rounds atteinte.')
+        ws.sendMessage(`endGame&${this.totalScore}`)
+        this.$api.put(`/games/${this.$route.params.id}`, {
+          status: 2,
+          score : this.totalScore,
+          advancement: this.roundNumber
+        })
+        this.$router.push('/')
       }
     },
     calculateScore(distance) {
@@ -165,19 +205,19 @@ export default {
               })
             ]
           }).setMinZoom(12)
-            .fitBounds([userPosition, this.actualRound.coords], {
-              padding: [50, 50]
-            })
+              .fitBounds([userPosition, this.actualRound.coords], {
+                padding: [50, 50]
+              })
           L.marker(userPosition, {
             icon: L.divIcon({
               html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border: 1px solid red; border-radius: 50%" />'
             })
           })
-            .bindTooltip('Votre choix', { permanent: true, direction: 'top' })
-            .addTo(popupMap)
+              .bindTooltip('Votre choix', { permanent: true, direction: 'top' })
+              .addTo(popupMap)
           L.marker(originalPosition, { title: 'test' })
-            .bindTooltip('Réponse', { permanent: true, direction: 'top' })
-            .addTo(popupMap)
+              .bindTooltip('Réponse', { permanent: true, direction: 'top' })
+              .addTo(popupMap)
           L.polyline([userPosition, originalPosition] as any, { dashArray: [10] }).addTo(popupMap)
           popupMap.invalidateSize()
         })
@@ -188,6 +228,23 @@ export default {
 </script>
 
 <style scoped>
+.minutor {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 200px;
+  height: 100px;
+  background-color: #2c3e50; /* Fond sombre pour contraste */
+  color: #ffffff; /* Texte en blanc pour lire facilement */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em; /* Augmente la taille du texte */
+  border-radius: 10px; /* Bords arrondis */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ombre légère pour profondeur */
+  text-shadow: 1px 1px 2px #000; /* Ombre sur le texte pour améliorer le contraste */
+}
+
 body {
   margin: 0 !important;
 }
