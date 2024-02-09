@@ -54,6 +54,7 @@ final class ListPlayedGamesAction extends AbstractAction
             $level = $level['data']['title'];
 
             $playedGamesData[] = [
+                'playedGamesId' => $playedGame->getId(),
                 'image' => $photo,
                 'city' => $city,
                 'level' => $level,
