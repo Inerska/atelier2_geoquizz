@@ -5,16 +5,13 @@
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""
   />
-
   <div class="container">
     <img :src="imageUrl" alt="Image dynamique" class="dynamic-image" />
     <div id="map" class="map-container"></div>
   </div>
-
   <div class="confirm">
     <button :disabled="!currentMarker" @click="onSubmit">Confirmer</button>
   </div>
-
   <div class="player">
     <img class="avatar" src="/avatar.svg" />
     <div class="progression">
@@ -22,7 +19,6 @@
       <p class="text">Round : {{ roundNumber }}/10</p>
     </div>
   </div>
-
   <div v-if="showPopup" class="leaflet-popup">
     <div id="popupMap" class="popup-map-container"></div>
     <div class="flex">
@@ -34,103 +30,99 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, nextTick } from 'vue'
 import * as L from 'leaflet'
 import { ws } from '@/utils/WebSocketService'
+import { GameProgression } from '@/utils/types' // @TODO: à utiliser pour gerer et bloquer certains éléments du jeu
+export default {
+  data() {
+    return {
+      currentMarker: null,
+      showPopup: false,
+      distanceBtwPoints: 0,
+      totalScore: 0,
+      score: 0,
+      roundNumber: 0,
+      imageUrl: '',
+      initialCenter: [48.693623, 6.183672],
+      gameProgression: {} as GameProgression,
+      roundsData: [
+        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy.jpg' },
+        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy2.jpg' },
+        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy3.jpg' },
+        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy4.jpg' },
+        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy5.jpg' }
+      ],
+      actualRound: null,
+      originalPosition: [],
+      map: null
+    }
+  },
+  mounted() {
+    // this.ws.init();
+    this.actualRound = this.roundsData.shift()
+    console.log(this.actualRound)
+    this.originalPosition = this.actualRound.coords
+    this.imageUrl = this.actualRound.imageUrl
+    this.roundNumber += 1
 
+    this.map = L.map('map').setView(this.initialCenter, 13).setMinZoom(12)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:
+        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(this.map)
 
-export default defineComponent({
-  setup() {
-    const currentMarker = ref<L.Marker | null>(null)
-    const showPopup = ref(false)
-    const distanceBtwPoints = ref(0)
-    const totalScore = ref(0)
-    const score = ref(0)
-    const roundNumber = ref(0)
-    const imageUrl = ref('')
-    const initialCenter = ref([48.693623, 6.183672] as L.LatLngExpression)
-
-    const roundsData = ref([
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy.jpg' },
-      { coords: [45.693623, 7.183672] as L.LatLngExpression, imageUrl: '/img/Nancy2.jpg' },
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy3.jpg' },
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy4.jpg' },
-      { coords: [48.693623, 6.183672] as L.LatLngExpression, imageUrl: '/img/Nancy5.jpg' }
-    ])
-    const actualRound = ref(roundsData.value.shift())
-    const originalPosition = actualRound.value.coords as L.LatLngExpression
-    imageUrl.value = actualRound.value.imageUrl as string
-    roundNumber.value += 1
-
-    const map = ref(null)
-      ws.connect('ws://localhost:5200')
-
-    onMounted(() => {
-
-
-      map.value = L.map('map').setView(initialCenter.value, 13).setMinZoom(12)
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map.value)
-
-      map.value.on('click', (e) => {
-        if (currentMarker.value) {
-          map.value.removeLayer(currentMarker.value as L.Marker)
-        }
-        currentMarker.value = L.marker(e.latlng).addTo(map.value)
-      })
-      ws.sendMessage('newGame')
-
+    this.map.on('click', (e) => {
+      if (this.currentMarker) {
+        this.map.removeLayer(this.currentMarker)
+      }
+      this.currentMarker = L.marker(e.latlng).addTo(this.map)
     })
+    ws.sendMessage('newGame')
+  },
+  methods: {
+    nextRound() {
+      if (this.roundsData.length > 0 && this.roundNumber < 10) {
+        this.actualRound = this.roundsData.shift()
+        this.imageUrl = this.actualRound.imageUrl
+        this.roundNumber += 1
 
-    const nextRound = () => {
-      if (roundsData.value.length > 0 && roundNumber.value < 10) {
-        actualRound.value = roundsData.value.shift() // Retire le premier élément du tableau
-        imageUrl.value = actualRound.value.imageUrl // Met à jour l'URL de l'image
-        roundNumber.value += 1 // Incrémente le numéro de round
-
-        map.value.removeLayer(currentMarker.value as L.Marker)
-
-        currentMarker.value = null
-        showPopup.value = false
-        score.value = 0
-        distanceBtwPoints.value = 0
-
-        // Met à jour la carte avec les nouvelles coordonnées
-        map.value.setView(actualRound.value.coords, 13)
-        // Assurez-vous de nettoyer la carte des marqueurs précédents si nécessaire
+        if (this.currentMarker) this.map.removeLayer(this.currentMarker)
+        this.currentMarker = null
+        this.showPopup = false
+        this.score = 0
+        this.distanceBtwPoints = 0
+        this.map.setView(this.actualRound.coords, 13)
       } else {
-        // Gérer la fin du jeu ou la réinitialisation complète ici
         console.log('Fin du jeu ou limite des rounds atteinte.')
       }
-    }
+    },
+    calculateScore(distance) {
+      const maxDistance = 1000 // Distance maximale pour calculer le score
+      const maxScore = 6000 // Score maximal possible
+      return Math.max(0, maxScore - maxScore * (distance / maxDistance))
+    },
+    onSubmit() {
+      if (this.currentMarker) {
+        this.showPopup = true
+        this.$nextTick(() => {
+          const userPosition = this.currentMarker.getLatLng()
+          const originalPosition = this.originalPosition
+          const distance = userPosition.distanceTo(originalPosition)
+          this.distanceBtwPoints = Math.round(distance)
+          this.score = this.calculateScore(this.distanceBtwPoints)
+          this.totalScore += this.score
 
-    const calculateScore = (distance: number) => {
-      const maxDistance = 1000 //5 km
-      const maxScore = 6000 // Score maximal
-      return Math.round(Math.max(0, maxScore - maxScore * (distance / maxDistance)))
-    }
-
-    const onSubmit = () => {
-      if (currentMarker.value) {
-        showPopup.value = true
-
-        // S'assurer que la popup est visible avant d'initialiser la carte
-        nextTick(() => {
-          const userPosition = currentMarker.value.getLatLng()
-          const popupMap = L.map('popupMap')
-            .setMinZoom(12)
-            .fitBounds([userPosition, roundsData.value[0].coords] as any, {
+          const popupMap = L.map('popupMap', {
+            center: userPosition,
+            layers: [
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; OpenStreetMap contributors'
+              })
+            ]
+          }).setMinZoom(12)
+            .fitBounds([userPosition, this.actualRound.coords], {
               padding: [50, 50]
             })
-
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution:
-              'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }).addTo(popupMap)
-
           L.marker(userPosition, {
             icon: L.divIcon({
               html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border-radius: 50%" />'
@@ -142,35 +134,21 @@ export default defineComponent({
             .bindTooltip('Réponse', { permanent: true, direction: 'top' })
             .addTo(popupMap)
           L.polyline([userPosition, originalPosition] as any, { dashArray: [10] }).addTo(popupMap)
-
-          distanceBtwPoints.value = Math.round(userPosition.distanceTo(originalPosition))
-          score.value = calculateScore(distanceBtwPoints.value) // Calculer le score
-          totalScore.value = totalScore.value + score.value
-
           popupMap.invalidateSize()
         })
       }
     }
-
-    return {
-      currentMarker,
-      nextRound,
-      showPopup,
-      onSubmit,
-      distanceBtwPoints,
-      score,
-      imageUrl,
-      roundNumber,
-      totalScore
-    }
   }
-})
+}
 </script>
+<style scoped>
+
 <style scoped>
 body {
   margin: 0 !important;
 }
-p, span {
+p,
+span {
   color: black !important;
 }
 .button-next {
@@ -208,7 +186,7 @@ p, span {
   width: 400px;
 }
 .confirm {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;

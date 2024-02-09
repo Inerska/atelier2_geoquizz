@@ -45,3 +45,11 @@ export type User = {
     accessToken: string;
     refreshToken: string;
 }
+export type PartialAuthUser = {
+    id: number;
+    accessToken: string;
+    refreshToken: string;
+}
+export type GameProgression = {
+    status: 'in_progress' | 'pause' | 'inter_serie' | 'finished';
+}
