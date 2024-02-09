@@ -34,6 +34,8 @@ use geoquizz\service\infrastructure\persistence\entity\PlayedGame;
             return $carry;
         }, 0);
 
+        $this->gamesCount = count($profile->getSavedGames());
+
         if ($profile->getActualGameId() !== null) {
             $this->actualGame = [
                 'id' => $profile->getActualGameId(),

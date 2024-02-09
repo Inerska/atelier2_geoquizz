@@ -12,11 +12,11 @@
       <h1>{{ username == "" ? "Chargement.." : username }}</h1>
       <div class="column-stats">
         <div class="data-stats">
-          <span class="value" id="nbGame">{{ gamesCount == -1 ? "Chargement.." : highScore }}</span>
+          <span class="value" id="nbGame">{{ gamesCount == -1 ? "Chargement.." : gamesCount }}</span>
           <p class="name">Partie.s</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">{{ totalScore == -1 ? "Chargement.." : highScore }}</span>
+          <span class="value" id="nbGame">{{ totalScore == -1 ? "Chargement.." : totalScore }}</span>
           <p class="name">Score Total</p>
         </div>
         <div class="data-stats">
@@ -90,8 +90,14 @@ import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import Game from '@/components/Game.vue'
 import { useUserStore } from '@/store/user'
+import game from "../components/Game.vue";
 
 export default {
+  computed: {
+    game() {
+      return game
+    }
+  },
 
   components: {
     HeaderComponent,
@@ -107,13 +113,13 @@ export default {
       return;
     }
 
-    this.$api.get(`/profiles/${userStore.getProfileId}`).then(resp => {
-      console.log(resp.data)
-      this.username = resp.data.username
-      this.actualGame = resp.data.actualGame
-      this.gamesCount = resp.data.savedGames.length
-      this.totalScore = resp.data.scoreTotal
-      this.highScore = resp.data.highScore
+    this.$api.get(`/profiles/${userStore.getProfileId}`).then(response => {
+      this.username = response.data.username
+      this.actualGame = response.data.actualGame
+      this.playedGames = response.data.savedGames
+      this.gamesCount = response.data.gamesCount
+      this.totalScore = response.data.scoreTotal
+      this.highScore = response.data.highScore
     }).catch(err => {
       console.log(err)
     })
