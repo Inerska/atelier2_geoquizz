@@ -12,15 +12,15 @@
       <h1>{{ username }}</h1>
       <div class="column-stats">
         <div class="data-stats">
-          <span class="value" id="nbGame">{{ gamesCount }}</span>
+          <span class="value" id="nbGame">{{ gamesCount == -1 ? "chargement.." : highScore }}</span>
           <p class="name">Partie.s</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">{{ totalScore }}</span>
+          <span class="value" id="nbGame">{{ totalScore == -1 ? "chargement.." : highScore }}</span>
           <p class="name">Score Total</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">{{ highScore }}</span>
+          <span class="value" id="nbGame">{{ highScore == -1 ? "chargement.." : highScore  }}</span>
           <p class="name">High score</p>
         </div>
       </div>
