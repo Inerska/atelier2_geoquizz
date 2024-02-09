@@ -28,7 +28,16 @@ final class GetGameAction extends AbstractAction
 
         $gameDto = new GameDto($game);
 
-        $response->getBody()->write(json_encode($gameDto, JSON_THROW_ON_ERROR));
+        // get the advancement of playedgame
+        $playedGame = $game->getPlayedGame();
+
+        // make new json of dto appending the advancement
+        $returnDto = [
+            'game' => $gameDto,
+            'advancement' => $playedGame->getAdvancement()
+        ];
+
+        $response->getBody()->write(json_encode($returnDto, JSON_THROW_ON_ERROR));
 
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
