@@ -23,7 +23,7 @@ export default {
       <nav class="nav">
         <ul>
           <li><router-link to="/">Accueil</router-link></li>
-          <li><router-link to="/jouer">Jouer</router-link></li>
+          <li><router-link to="/jeu">Jouer</router-link></li>
           <li v-if="this.isLoggedIn"><router-link to="/profil">Profil</router-link></li>
           <li v-if="this.isLoggedIn" @click="logout()"><router-link to="/connexion">Deconnexion</router-link></li>
           <li v-if="!this.isLoggedIn"><router-link to="/connexion">Connexion</router-link></li>

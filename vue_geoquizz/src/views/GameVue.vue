@@ -38,6 +38,7 @@ import { defineComponent, onMounted, ref, nextTick } from 'vue'
 import * as L from 'leaflet'
 import { ws } from '@/utils/WebSocketService'
 
+
 export default defineComponent({
   setup() {
     const currentMarker = ref<L.Marker | null>(null)
@@ -165,8 +166,6 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped>
-
 <style scoped>
 body {
   margin: 0 !important;

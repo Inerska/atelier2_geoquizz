@@ -16,7 +16,7 @@ const router = createRouter({
             component: LandingVue
         },
         {
-            path: '/jeu',
+            path: '/jeu/:id',
             name: 'game',
             component: GameVue
         },

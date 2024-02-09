@@ -3,12 +3,11 @@ import Game from '@/components/Game.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
-import { ws } from '@/utils/WebSocketService'
+import {ws} from '@/utils/WebSocketService'
 // import CreateGameComponent from "@/components/CreateGameComponent.vue";
 // import axios from 'axios'
-import { mapState } from 'pinia'
-import { useUserStore } from '@/store/user'
-//TODO : mettre currentGame et createGame sur une seule ligne en desktop, et comme mtntn en mobile
+import {mapActions, mapState} from 'pinia'
+import {useUserStore} from '@/store/user'
 
 export default {
   components: {
@@ -16,8 +15,7 @@ export default {
     Tooltip,
     HeaderComponent,
     FooterComponent,
-
-},
+  },
   data() {
     return {
       gamesList: [],
@@ -25,7 +23,8 @@ export default {
       levelsList: [],
       newGame: {
         serie_id: "",
-        level_id: ""
+        level_id: "",
+        public: false
       },
       publicGames: {
         game1: {
@@ -58,29 +57,44 @@ export default {
   created() {
     this.$api.get('/games')
         .then(resp => {
-          this.seriesList = resp.data.data
+          //this.seriesList = resp.data.data
+          console.log(resp.data)
         }).catch(err => {
-          console.log(err)
-        })
+      console.log(err)
+    })
 
     this.$api.get('/series')
         .then(resp => {
           this.seriesList = resp.data.data
         }).catch(err => {
-          console.log(err)
-        })
+      console.log(err)
+    })
 
     this.$api.get('/levels')
         .then(resp => {
           this.levelsList = resp.data.data
         }).catch(err => {
-          console.log(err)
-        })
+      console.log(err)
+    })
 
+  },
+  computed : {
+    ...mapState(useUserStore, ['getProfileId']),
   },
   methods: {
     createGame() {
       console.log('createGame')
+      this.$api.post('/games', {
+        serie_id: this.newGame.serie_id,
+        level_id: this.newGame.level_id,
+        profile_id: this.getProfileId,
+        is_public: this.newGame.public
+      }).then(resp => {
+        console.log("createGame, id du playedGame ", resp.data)
+        this.$router.push(`/jeu/${resp.data.id}`)
+      }).catch(err => {
+        console.log(err)
+      })
     },
     linkSerie(id) {
       this.$router.push("/serie/" + id)
@@ -90,7 +104,7 @@ export default {
 </script>
 
 <template>
-  <HeaderComponent />
+  <HeaderComponent/>
   <div class="game-header">
     <div class="new-game">
       <h2>Lancer une nouvelle partie</h2>
@@ -107,10 +121,13 @@ export default {
           <option disabled selected value="">Choisir un niveau</option>
           <option v-for="level in levelsList" :key="level.id" :value="level.id">{{ level.title }}</option>
         </select>
-        <button class="new-game-button">Lancer</button>
+        <input v-model="newGame.public" type="checkbox" id="public" name="public" checked/>
+        <label for="public">Publique ? </label>
+        <button @click="createGame()" class="new-game-button">Lancer</button>
       </div>
     </div>
     <div class="current-game">
+      <!-- //TODO : get le actuelGame et l'affiche si il y a -->
       <div class="current-game-card">
         <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
         <div class="current-game-button-1"> MONTPELLIER</div>
@@ -125,7 +142,10 @@ export default {
       <Tooltip desc="Découvre les parties publiques sur une ville !" width="25"/>
     </div>
     <div class="series-cards">
-      <button v-for="serie in seriesList" @click="linkSerie(serie.id)" :key="serie.id" class="serie-card">{{ serie.city }}</button>
+      <button v-for="serie in seriesList" @click="linkSerie(serie.id)" :key="serie.id" class="serie-card">{{
+          serie.city
+        }}
+      </button>
     </div>
   </div>
 
@@ -135,7 +155,8 @@ export default {
       <Tooltip desc="Découvre les parties créées par d'autres joueurs !" width="27"/>
     </div>
     <div class="public-games-cards">
-      <Game v-for="game in publicGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie" class="card"/>
+      <Game v-for="game in publicGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie"
+            class="card"/>
     </div>
   </div>
 
@@ -149,6 +170,7 @@ h2 {
   font-size: 2em; // 2.5em
   padding: .2em;
 }
+
 h3 {
   font-size: 1em; //1.2em
   color: rgba(255, 255, 255, 0.3);
@@ -157,6 +179,7 @@ h3 {
   padding-bottom: 1em;
   font-weight: 400;
 }
+
 .new-game {
   text-align: center;
   color: white;
@@ -187,6 +210,7 @@ h3 {
     gap: 1em;
     justify-content: center;
     align-items: center;
+
     select {
       appearance: none;
       line-height: 2;
@@ -198,6 +222,7 @@ h3 {
       color: black;
       cursor: pointer;
     }
+
     .new-game-button {
       font-size: 1.2em;
       cursor: pointer;
@@ -207,6 +232,7 @@ h3 {
       border-radius: 1rem;
       padding: .5em 1.5em;
       transition: 0.8s;
+
       &:hover {
         background-color: rgb(18, 16, 24);
         transition: 0.8s;
@@ -250,6 +276,7 @@ h3 {
     font-size: 1.2em;
     font-weight: 300;
   }
+
   .current-game-button-1 {
     top: -3.5em;
     font-weight: bold;
@@ -346,6 +373,7 @@ h3 {
       font-size: 2.5em;
       padding: .2em;
     }
+
     h3 {
       font-size: 1.2em;
       color: rgba(255, 255, 255, 0.3);
@@ -354,19 +382,20 @@ h3 {
       padding-bottom: 1em;
       font-weight: 400;
     }
+
     .info {
       border-radius: 8px;
     }
 
     &-banner {
-        border-radius: 1rem;
-        width: fit-content;
-        flex-direction: row;
+      border-radius: 1rem;
+      width: fit-content;
+      flex-direction: row;
     }
   }
 }
 
-@media only screen and (min-width: 1200px){
+@media only screen and (min-width: 1200px) {
   h2 {
     margin: 0;
     font-size: 2.5em;
@@ -387,6 +416,7 @@ h3 {
     align-items: center;
     padding: 2em;
     gap: 1em;
+
     .new-game {
 
       .info {

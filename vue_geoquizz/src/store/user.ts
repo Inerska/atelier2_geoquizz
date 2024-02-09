@@ -14,7 +14,10 @@ export const useUserStore = defineStore('userStore', {
     getters: {
         isLoggedIn(state) {
             return state.user.loggedIn;
-        }
+        },
+        getProfileId(state) {
+            return state.user.profileId;
+        },
     },
     actions: {
         loginUser(profileId, accessToken, refreshToken) {
