@@ -56,9 +56,13 @@ export default {
       originalPosition: [],
       map: null,
       totalRounds : 0,
-      timer: "00:00"
+      timer: "01:00",
+      timerInterval: null,
     }
   },
+  beforeMount() {
+    clearInterval(this.timerInterval);
+},
   // @ts-ignore // typescript n'arrive pas à lire correctement le fichier tsconfig
   async mounted() {
     await this.$api.get(`games/${this.$route.params.id}`).then((resp) => {
@@ -124,33 +128,29 @@ export default {
       }
       this.currentMarker = L.marker(e.latlng).addTo(this.map)
     })
-    //ws.sendMessage('newGame')
+    ws.sendMessage('newGame')
   },
   methods: {
     startTimer() {
-      let totalTime = 60; // 60 secondes pour 1 minute
-      this.timer = "01:00";
-      const interval = setInterval(() => {
+      if (this.timerInterval) {
+        clearInterval(this.timerInterval); // Effacez l'intervalle existant avant d'en démarrer un nouveau
+      }
+      let totalTime = 60;
+      this.timer = "01:00"; // Initialiser le timer à 1 minute
+      this.timerInterval = setInterval(() => {
         const minutes = Math.floor(totalTime / 60);
         const seconds = totalTime % 60;
-        // @ts-ignore // config pas à jour pour typescript
+        // @ts-ignore // configuration typescript n'est pas correctement à jour pour l'ide
         this.timer = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         if (totalTime <= 0) {
-          clearInterval(interval);
-          this.endRound(); // Méthode pour gérer la fin du round
+          clearInterval(this.timerInterval);
+          this.endRound();
         }
         totalTime--;
       }, 1000);
     },
     endRound() {
-      if (this.currentMarker) {
-        this.onSubmit(); // Simule la soumission si un marqueur a été placé
-      } else {
-        this.distanceBtwPoints = 0;
-        this.score = 0;
-        this.showPopup = true; // Affiche les résultats avec 0 distance et 0 score
-        this.nextRound(); // Passe au round suivant
-      }
+      this.onSubmit();
     },
     nextRound() {
       this.startTimer();
@@ -176,7 +176,7 @@ export default {
         ws.sendMessage(`endGame&${this.totalScore}`)
         this.$api.put(`/games/${this.$route.params.id}`, {
           status: 2,
-          score : this.totalScore,
+          score: this.totalScore,
           advancement: this.roundNumber
         })
         this.$router.push('/')
@@ -188,6 +188,8 @@ export default {
       return Math.max(0, maxScore - maxScore * (distance / maxDistance))
     },
     onSubmit() {
+      clearInterval(this.timerInterval); // Assurez-vous d'arrêter 
+
       if (this.currentMarker) {
         this.showPopup = true
         this.$nextTick(() => {
@@ -213,18 +215,42 @@ export default {
               html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border: 1px solid red; border-radius: 50%" />'
             })
           })
-              .bindTooltip('Votre choix', { permanent: true, direction: 'top' })
+              .bindTooltip('Votre choix', {permanent: true, direction: 'top'})
               .addTo(popupMap)
-          L.marker(originalPosition, { title: 'test' })
-              .bindTooltip('Réponse', { permanent: true, direction: 'top' })
+          L.marker(originalPosition, {title: 'test'})
+              .bindTooltip('Réponse', {permanent: true, direction: 'top'})
               .addTo(popupMap)
-          L.polyline([userPosition, originalPosition] as any, { dashArray: [10] }).addTo(popupMap)
+          L.polyline([userPosition, originalPosition] as any, {dashArray: [10]}).addTo(popupMap)
           popupMap.invalidateSize()
         })
       }
+     else {
+      this.distanceBtwPoints = 0;
+      this.score = 0;
+      this.showPopup = true; // Affiche les résultats avec 0 distance et 0 score
+      this.$nextTick(() => {
+        const originalPosition = this.originalPosition
+
+
+        const popupMap = L.map('popupMap', {
+
+          layers: [
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: 'Map data &copy; OpenStreetMap contributors'
+            })
+          ]
+        }).setMinZoom(12)
+            .fitBounds([this.actualRound.coords], {
+              padding: [50, 50]
+            })
+        L.marker(originalPosition)
+            .bindTooltip('Réponse', {permanent: true, direction: 'top'})
+            .addTo(popupMap)
+        popupMap.invalidateSize()
+      })
     }
   }
-}
+}}
 </script>
 
 <style scoped>
@@ -232,17 +258,17 @@ export default {
   position: fixed;
   bottom: 30px;
   left: 30px;
-  width: 200px;
+  width: 300px;
   height: 100px;
-  background-color: #2c3e50; /* Fond sombre pour contraste */
-  color: #ffffff; /* Texte en blanc pour lire facilement */
+  background-color: #fff;
+  color: #000;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2em; /* Augmente la taille du texte */
-  border-radius: 10px; /* Bords arrondis */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Ombre légère pour profondeur */
-  text-shadow: 1px 1px 2px #000; /* Ombre sur le texte pour améliorer le contraste */
+  font-size: 2em;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 10px;
 }
 
 body {
