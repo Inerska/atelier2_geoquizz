@@ -34,16 +34,16 @@ final class GetGameAction extends AbstractAction
             ->getRepository(PlayedGame::class)
             ->findBy(['game_id' => $game->getId()]);
 
-if ($playedGame === null) {
+        if ($playedGame === null) {
             $response->getBody()->write(json_encode(['error' => 'PlayedGame not found'], JSON_THROW_ON_ERROR));
             return $response->withStatus(404);
-}
+        }
 
         $playedGame = $playedGame[0];
 
         $returnDto = [
-            "game" => $gameDto,
-            "advancement" => $playedGame->getAdvancement()
+            'game' => $gameDto,
+            'advancement' => $playedGame->getAdvancement()
         ];
 
         $response->getBody()->write(json_encode($returnDto, JSON_THROW_ON_ERROR));

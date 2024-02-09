@@ -48,7 +48,10 @@ final class CreateGameAction extends AbstractAction
 
         $photosCount = $photosCount['data']['photoCount'];
 
-        $photosForLevel = array_rand($photos, (int)$photosCount);
+        $photosForLevel = [];
+        $photosForLevel = array_merge($photosForLevel, $photos);
+        shuffle($photosForLevel);
+        $photosForLevel = array_slice($photosForLevel, 0, (int)$photosCount);
 
         $game = new Game();
         $game->setSerieId($serie_id);
