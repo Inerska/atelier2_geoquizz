@@ -28,7 +28,7 @@ final class CreateProfileAction extends AbstractAction
         $profile = new Profile();
         $profile->setUsername($data['username']);
 
-        $profile->setActualGame(null);
+        $profile->setActualGameId(null);
 
         try {
             $this->entityManager->persist($profile);

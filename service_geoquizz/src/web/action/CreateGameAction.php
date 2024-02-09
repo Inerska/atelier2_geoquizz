@@ -77,8 +77,6 @@ final class CreateGameAction extends AbstractAction
 
     private function fetchPhotosForGame(int $serie_id, int $level_id): array
     {
-        echo 'http://gateway_nginx/api/v1/series/' . $serie_id; die;
-
         $photosResponse = $this->httpClient->request('GET', 'http://gateway_nginx/api/v1/series/' . $serie_id);
         $photosData = json_decode($photosResponse->getBody()->getContents(), true);
         $photos = $photosData['data']['photos'] ?? [];

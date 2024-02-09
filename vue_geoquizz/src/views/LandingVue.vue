@@ -88,7 +88,7 @@ export default {
         profile_id: useUserStore().getProfileId,
         is_public: this.newGame.public
       }).then(resp => {
-        //console.log("createGame, id du playedGame ", resp.data)
+        console.log("createGame, id du playedGame ", resp.data)
         this.$router.push(`/jeu/${resp.data.id}`)
       }).catch(err => {
         console.log(err)

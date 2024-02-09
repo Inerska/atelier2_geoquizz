@@ -24,8 +24,8 @@ class PlayedGame
     #[JoinColumn(name: 'game_id', referencedColumnName: 'id', unique: false, nullable: false)]
     private ?Game $game = null;
 
-    #[OneToOne(targetEntity: Profile::class)]
-    #[JoinColumn(name: 'profile_id', referencedColumnName: 'id', unique: false, nullable: false)]
+    #[ManyToOne(targetEntity: Profile::class)]
+    #[JoinColumn(name: 'profile_id', referencedColumnName: 'id', nullable: false)]
     private ?Profile $profile = null;
 
     #[Column]

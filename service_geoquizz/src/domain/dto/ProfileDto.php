@@ -20,9 +20,9 @@ class ProfileDto
         $this->id = $profile->getId();
         $this->username = $profile->getUsername();
 
-        if ($profile->getActualGame() instanceof PlayedGame) {
+        if ($profile->getActualGameId() !== null) {
             $this->actualGame = [
-                'id' => $profile->getActualGame()->getId(),
+                'id' => $profile->getActualGameId(),
             ];
         }
 

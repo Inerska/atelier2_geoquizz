@@ -58,6 +58,8 @@ final class UpdateGameAction extends AbstractAction
             $profile = $playedGame->getProfile();
 
             $profile->addSavedGame($playedGame);
+
+            $profile->setActualGameId(null);
         }
 
         if ($playedGame->getStatus() === 1) {
@@ -70,7 +72,7 @@ final class UpdateGameAction extends AbstractAction
                 return $response->withStatus(404);
             }
 
-            $profile->setActualGame($playedGame);
+            $profile->setActualGameId($playedGame->getId());
         }
 
         try {

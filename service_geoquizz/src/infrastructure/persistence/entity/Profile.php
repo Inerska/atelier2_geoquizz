@@ -14,7 +14,6 @@ use Doctrine\ORM\Mapping\InverseJoinColumn;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
@@ -27,20 +26,28 @@ class Profile
     #[Column]
     private string $username;
 
-    #[OneToOne(mappedBy: 'actualGame', targetEntity: PlayedGame::class)]
-    #[JoinColumn(name: 'actualgame_id', referencedColumnName: 'id', unique: false, nullable: true)]
-    private ?PlayedGame $actualGame;
+    #[Column(name: 'actual_game_id', type: 'integer', nullable: true)]
+    private ?int $actualGameId = null;
 
+    #[ManyToMany(targetEntity: PlayedGame::class)]
     #[JoinTable(name: 'profile_savedgames')]
     #[JoinColumn(name: 'profile_id', referencedColumnName: 'id')]
     #[InverseJoinColumn(name: 'playedgame_id', referencedColumnName: 'id')]
-    #[ManyToMany(targetEntity: PlayedGame::class)]
     private Collection $savedGames;
-
 
     public function __construct()
     {
         $this->savedGames = new ArrayCollection();
+    }
+
+    public function getActualGameId(): ?int
+    {
+        return $this->actualGameId;
+    }
+
+    public function setActualGameId(?int $actualGameId): void
+    {
+        $this->actualGameId = $actualGameId;
     }
 
     public function addSavedGame(PlayedGame $playedGame): void
@@ -83,25 +90,6 @@ class Profile
         $this->username = $username;
     }
 
-    /**
-     * @return Game
-     */
-    public function getActualGame(): ?PlayedGame
-    {
-        return $this->actualGame;
-    }
-
-    /**
-     * @param Game $actualGame
-     */
-    public function setActualGame(?PlayedGame $actualGame): void
-    {
-        $this->actualGame = $actualGame;
-    }
-
-    /**
-     * @return Collection
-     */
     public function getSavedGames(): Collection
     {
         return $this->savedGames;
