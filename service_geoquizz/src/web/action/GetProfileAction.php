@@ -6,6 +6,7 @@ namespace geoquizz\service\web\action;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
+use geoquizz\service\domain\dto\ProfileDto;
 use geoquizz\service\infrastructure\action\AbstractAction;
 use geoquizz\service\infrastructure\persistence\entity\Game;
 use geoquizz\service\infrastructure\persistence\entity\Profile;
@@ -34,7 +35,9 @@ final class GetProfileAction extends AbstractAction
             return $response->withStatus(404);
         }
 
-        $response->getBody()->write(json_encode($profile, JSON_THROW_ON_ERROR));
+        $dto = new ProfileDto($profile);
+
+        $response->getBody()->write(json_encode($dto, JSON_THROW_ON_ERROR));
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
