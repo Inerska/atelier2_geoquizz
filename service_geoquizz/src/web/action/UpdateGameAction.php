@@ -53,6 +53,17 @@ final class UpdateGameAction extends AbstractAction
             $playedGame->setAdvancement((int)$data['advancement']);
         }
 
+        if ($playedGame->getStatus() === 2) {
+            $profile = $playedGame->getProfile();
+            $profile->setSavedGames(array_filter($profile->getSavedGames(), static fn($game) => $game->getId() !== $playedGame->getId()));
+        }
+
+        if ($playedGame->getStatus() === 1) {
+            $profile = $playedGame->getProfile();
+
+            $profile->setActualGame($playedGame);
+        }
+
         try {
             $this->entityManager->persist($playedGame);
             $this->entityManager->flush();
