@@ -104,6 +104,7 @@ export default {
 
     if (!userStore.getProfileId) {
       this.$router.push('/connexion')
+      return;
     }
 
     this.$api.get(`/profiles/${userStore.getProfileId}`).then(resp => {
