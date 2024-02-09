@@ -1,4 +1,3 @@
-Nv v
 <script lang="ts">
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
