@@ -60,60 +60,42 @@ final class CreateGameAction extends AbstractAction
         $game->setIsPublic($is_public);
 
         try {
+            $existingPlayedGame = $this->entityManager->getRepository(PlayedGame::class)
+                ->findOneBy(['profile' => $profile_id, 'game' => $game->getId()]);
+
+            if ($existingPlayedGame !== null) {
+                $response->getBody()->write(json_encode(['message' => 'Game already played by this profile'], JSON_THROW_ON_ERROR));
+                return $response->withStatus(409);
+            }
+
+            $playedGame = new PlayedGame();
             $profile = $this->entityManager->find(Profile::class, $profile_id);
+
             if ($profile === null) {
                 return $response->withStatus(404);
             }
 
-            $existingGame = $this->entityManager->getRepository(Game::class)
-                ->findOneBy(['serieId' => $serie_id, 'levelId' => $level_id]);
+            $this->entityManager->persist($game);
+            $this->entityManager->flush();
 
-            if (!$existingGame) {
-                $game = new Game();
-                $game->setSerieId($serie_id);
-                $game->setLevelId($level_id);
-                $game->setPhotos(json_encode($photosForLevel, JSON_THROW_ON_ERROR));
-                $game->setIsPublic($is_public);
-                $this->entityManager->persist($game);
-                $this->entityManager->flush();
-            } else {
-                $game = $existingGame;
-            }
+            $playedGame->setProfile($profile);
+            $playedGame->setStatus(0);
+            $playedGame->setGame($game);
+            $playedGame->setScore(0);
+            $playedGame->setAdvancement(1);
+            $playedGame->setTime(0);
+            $playedGame->setDistance(0);
 
-            $existingPlayedGame = $this->entityManager->getRepository(PlayedGame::class)
-                ->findOneBy(['profile' => $profile, 'game' => $game]);
-
-            if ($existingPlayedGame) {
-                $existingPlayedGame->setStatus(0);
-                $existingPlayedGame->setScore(0);
-                $existingPlayedGame->setAdvancement(1);
-                $existingPlayedGame->setTime(0);
-                $existingPlayedGame->setDistance(0);
-                $playedGame = $existingPlayedGame;
-            } else {
-                $playedGame = new PlayedGame();
-                $playedGame->setProfile($profile);
-                $playedGame->setGame($game);
-                $playedGame->setStatus(0);
-                $playedGame->setScore(0);
-                $playedGame->setAdvancement(1);
-                $playedGame->setTime(0);
-                $playedGame->setDistance(0);
-                $this->entityManager->persist($playedGame);
-            }
-
+            $this->entityManager->persist($playedGame);
             $this->entityManager->flush();
         } catch (NotSupported $e) {
-            $response->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
+            $request->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
             return $response->withStatus(500);
         } catch (ORMException $e) {
-            $response->getBody()->write(json_encode(['error' => 'ORM exception'], JSON_THROW_ON_ERROR));
+            $request->getBody()->write(json_encode(['error' => 'ORM exception'], JSON_THROW_ON_ERROR));
             return $response->withStatus(500);
         }
 
         $response->getBody()->write(json_encode(['id' => $playedGame->getId()], JSON_THROW_ON_ERROR));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
     }
-}
