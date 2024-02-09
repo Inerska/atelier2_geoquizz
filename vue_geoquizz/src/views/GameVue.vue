@@ -23,7 +23,7 @@
     </div>
   </div>
   <div class="minutor">
-    <p>Temps restant : {{ timer }}</p>
+    <p>Temps restant : {{ timer }}s</p>
   </div>
   <div v-if="showPopup" class="leaflet-popup">
     <div id="popupMap" class="popup-map-container"></div>
@@ -59,8 +59,10 @@ export default {
       originalPosition: [],
       map: null,
       totalRounds : 0,
-      timer: "01:00",
+      timer: 20,
       timerInterval: null,
+	  	maxTime: 20,
+	  	D: 100,
     }
   },
   beforeMount() {
@@ -142,22 +144,20 @@ export default {
       })
       this.$router.push("/")
     },
-    startTimer() {
+	startTimer() {
+      this.timer = this.maxTime; // réinitialise le timer
+
       if (this.timerInterval) {
-        clearInterval(this.timerInterval); // Effacez l'intervalle existant avant d'en démarrer un nouveau
+        clearInterval(this.timerInterval); 
       }
-      let totalTime = 60;
-      this.timer = "01:00"; // Initialiser le timer à 1 minute
+
       this.timerInterval = setInterval(() => {
-        const minutes = Math.floor(totalTime / 60);
-        const seconds = totalTime % 60;
-        // @ts-ignore // configuration typescript n'est pas correctement à jour pour l'ide
-        this.timer = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        if (totalTime <= 0) {
-          clearInterval(this.timerInterval);
-          this.endRound();
-        }
-        totalTime--;
+      this.timer--; 
+
+      if (this.timer <= 0) {
+        clearInterval(this.timerInterval);
+        	this.endRound(); // termine le tour si le temps est écoulé
+      	}
       }, 1000);
     },
     endRound() {
@@ -194,10 +194,27 @@ export default {
         this.$router.push('/')
       }
     },
-    calculateScore(distance) {
-      const maxDistance = 1000 // Distance maximale pour calculer le score
-      const maxScore = 6000 // Score maximal possible
-      return Math.max(0, maxScore - maxScore * (distance / maxDistance))
+		calculateScore(distance: number) {
+      const timeElapsed = this.maxTime - this.timer; // Calcul du temps écoulé basé sur le timer
+      let score = 0;
+      
+      if (distance < this.D) {
+        score = 5;
+      } else if (distance < (2 * this.D)) {
+        score = 3;
+      } else if (distance < (3 * this.D)) {
+        score = 1;
+      }
+
+      if (timeElapsed <= 5) { // Moins de 5 secondes
+        score *= 4;
+      } else if (timeElapsed <= 10) { // Moins de 10 secondes
+        score *= 2;
+      } else if (timeElapsed > 20) { // Plus de 20 secondes
+        score = 0; // Les points ne sont pas acquis
+      }
+
+      return score;
     },
     onSubmit() {
       clearInterval(this.timerInterval);
