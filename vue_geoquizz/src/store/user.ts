@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { User } from '@/models/User';
 
 export const useUserStore = defineStore('userStore', {
     state() {
@@ -21,8 +20,11 @@ export const useUserStore = defineStore('userStore', {
         },
     },
     actions: {
-        loginUser(user) {
-            this.user = user;
+        loginUser(profileId, accessToken, refreshToken) {
+            this.user.loggedIn = true;
+            this.user.profileId = profileId;
+            this.user.accessToken = accessToken;
+            this.user.refreshToken = refreshToken;
         },
         logoutUser() {
             this.user.loggedIn = false;

@@ -27,6 +27,7 @@ export default {
         level_id: "",
         public: false
       },
+      createdGames: [],
       publicGames: []
     }
   },
@@ -34,24 +35,31 @@ export default {
     this.$api.get('/games')
         .then(resp => {
           //this.seriesList = resp.data.data
-          console.log(" get games ", resp.data)
+          //console.log(" get games ", resp.data)
           resp.data.forEach((game) => {
             if (game.isPublic) {
               this.publicGames.push(game)
             }
           })
-          console.log(this.publicGames)
+          //console.log(this.publicGames)
         }).catch(err => {
       console.log(err)
     })
 
     if (this.getProfileId !== null) {
-      this.$api.get(`profiles/${this.getProfileId}`)
+      this.$api.get(`profiles/${this.getProfileId}/playedGames/`)
           .then(resp => {
-            this.currentGame = resp.data.actualGame
-            //console.log( "profile infos ",resp.data)
+            //console.log("toutes les Games ", resp.data)
+            resp.data.forEach(game => {
+              if (game.status === 0 ) {
+                this.createdGames.push(game)
+              }
+              if (game.status === 1) {
+                this.currentGame = resp.data.actualGame
+              }
+            })
           }).catch(err => {
-        console.log(err)
+        console.log(err.response)
       })
     }
 
@@ -75,14 +83,14 @@ export default {
   },
   methods: {
     createGame() {
-      console.log('createGame')
+      //console.log('createGame')
       this.$api.post('/games', {
         serie_id: this.newGame.serie_id,
         level_id: this.newGame.level_id,
         profile_id: this.getProfileId,
         is_public: this.newGame.public
       }).then(resp => {
-        console.log("createGame, id du playedGame ", resp.data)
+        //console.log("createGame, id du playedGame ", resp.data)
         this.$router.push(`/jeu/${resp.data.id}`)
       }).catch(err => {
         console.log(err)
@@ -90,6 +98,9 @@ export default {
     },
     linkSerie(id) {
       this.$router.push("/serie/" + id)
+    },
+    launchGame(id) {
+      this.$router.push(`/jeu/${id}`)
     }
   }
 }
@@ -124,6 +135,19 @@ export default {
         <div class="current-game-button-1"> MONTPELLIER</div>
         <div class="current-game-button-2"> Continuer la partie</div>
       </div>
+    </div>
+  </div>
+
+
+  <div  v-if="createdGames.length > 0"  class="public-games">
+    {{createdGames}}
+    <div class="title">
+      <h2>Vos parties créées </h2>
+      <Tooltip desc="Parties créées mais pas lancées" width="20"/>
+    </div>
+    <div class="public-games-cards">
+      <Game @click="launchGame(game.playedGamesId)" v-for="game in createdGames" :level="game.level" :key="game.playedGamesId" :serie="game.serie"
+            class="card"/>
     </div>
   </div>
 

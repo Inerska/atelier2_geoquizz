@@ -28,15 +28,11 @@
     <main class="parent-container">
       <div class="small-container">
         <h2 class="title">Historique des parties</h2>
-        <div class="game-container">
+        <div v-if="playedGames" class="game-container">
           <!-- @TODO : Boucler les données depuis la DB -->
           <Game v-for="game in playedGames" :serie="game.serie" :photo="game.photo" :level="game.level" :key="game.id" />
-          <Game serie="Nancy" photo="/img/Nancy.jpg" level="" />
-          <Game serie="Nancy" photo="/img/Nancy2.jpg" level="2" />
-          <Game serie="Nancy" photo="/img/Nancy3.jpg" level="2" />
-          <Game serie="Nancy" photo="/img/Nancy4.jpg" level="2" />
-          <Game serie="Nancy" photo="/img/Nancy5.jpg" level="2" />
         </div>
+        <div v-else>Vous n'avez pas encore joué de partie Geoquizz, lancez-vous maintenant !</div>
       </div>
     </main>
     <!-- @TODO : Vérifier si la personne sur le profil est bien la personne propriétaire de celle-ci avant d'afficher cette section -->
