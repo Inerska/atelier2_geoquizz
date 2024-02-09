@@ -21,47 +21,39 @@ export default {
       gamesList: [],
       seriesList: [],
       levelsList: [],
+      currentGame: null,
       newGame: {
         serie_id: "",
         level_id: "",
         public: false
       },
-      publicGames: {
-        game1: {
-          id: 1,
-          serie: "Paris",
-          level: "easy",
-          photo: "../assets/img/Nancy.jpg"
-        },
-        game2: {
-          id: 2,
-          serie: "Montpellier",
-          level: "medium",
-          photo: ""
-        },
-        game3: {
-          id: 3,
-          serie: "Nancy",
-          level: "hard",
-          photo: ""
-        },
-        game4: {
-          id: 4,
-          serie: "Nancy",
-          level: "easy",
-          photo: ""
-        }
-      }
+      publicGames: []
     }
   },
   created() {
     this.$api.get('/games')
         .then(resp => {
           //this.seriesList = resp.data.data
-          console.log(resp.data)
+          console.log(" get games ", resp.data)
+          resp.data.forEach((game) => {
+            if (game.isPublic) {
+              this.publicGames.push(game)
+            }
+          })
+          console.log(this.publicGames)
         }).catch(err => {
       console.log(err)
     })
+
+    if (this.getProfileId !== null) {
+      this.$api.get(`profiles/${this.getProfileId}`)
+          .then(resp => {
+            this.currentGame = resp.data.actualGame
+            //console.log( "profile infos ",resp.data)
+          }).catch(err => {
+        console.log(err)
+      })
+    }
 
     this.$api.get('/series')
         .then(resp => {
@@ -78,7 +70,7 @@ export default {
     })
 
   },
-  computed : {
+  computed: {
     ...mapState(useUserStore, ['getProfileId']),
   },
   methods: {
@@ -126,8 +118,7 @@ export default {
         <button @click="createGame()" class="new-game-button">Lancer</button>
       </div>
     </div>
-    <div class="current-game">
-      <!-- //TODO : get le actuelGame et l'affiche si il y a -->
+    <div v-if="currentGame" class="current-game">
       <div class="current-game-card">
         <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
         <div class="current-game-button-1"> MONTPELLIER</div>
@@ -154,10 +145,11 @@ export default {
       <h2>Parties publiques</h2>
       <Tooltip desc="Découvre les parties créées par d'autres joueurs !" width="27"/>
     </div>
-    <div class="public-games-cards">
+    <div v-if="publicGames.length > 0" class="public-games-cards">
       <Game v-for="game in publicGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie"
             class="card"/>
     </div>
+    <div v-else>Il n'y a pas de parties publiques.</div>
   </div>
 
 </template>
