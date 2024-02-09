@@ -102,7 +102,10 @@ export default {
 
     const userStore = useUserStore()
 
-    console.log("user dans le created ", this.user)
+    if (!userStore.getProfileId) {
+      this.$router.push('/connexion')
+    }
+
     this.$api.get(`/profiles/${userStore.getProfileId}`).then(resp => {
       console.log(resp.data)
       this.username = resp.data.username
