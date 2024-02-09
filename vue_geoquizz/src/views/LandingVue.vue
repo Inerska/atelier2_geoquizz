@@ -35,13 +35,13 @@ export default {
     this.$api.get('/games')
         .then(resp => {
           //this.seriesList = resp.data.data
-          console.log(" get games ", resp.data)
+          //console.log(" get games ", resp.data)
           resp.data.forEach((game) => {
             if (game.isPublic) {
               this.publicGames.push(game)
             }
           })
-          console.log(this.publicGames)
+          //console.log(this.publicGames)
         }).catch(err => {
       console.log(err)
     })
@@ -49,7 +49,7 @@ export default {
     if (this.getProfileId !== null) {
       this.$api.get(`profiles/${this.getProfileId}/playedGames/`)
           .then(resp => {
-            console.log("toutes les Games ", resp.data)
+            //console.log("toutes les Games ", resp.data)
             resp.data.forEach(game => {
               if (game.status === 0 ) {
                 this.createdGames.push(game)
@@ -83,14 +83,14 @@ export default {
   },
   methods: {
     createGame() {
-      console.log('createGame')
+      //console.log('createGame')
       this.$api.post('/games', {
         serie_id: this.newGame.serie_id,
         level_id: this.newGame.level_id,
         profile_id: this.getProfileId,
         is_public: this.newGame.public
       }).then(resp => {
-        console.log("createGame, id du playedGame ", resp.data)
+        //console.log("createGame, id du playedGame ", resp.data)
         this.$router.push(`/jeu/${resp.data.id}`)
       }).catch(err => {
         console.log(err)
@@ -140,12 +140,13 @@ export default {
 
 
   <div  v-if="createdGames.length > 0"  class="public-games">
+    {{createdGames}}
     <div class="title">
       <h2>Vos parties créées </h2>
       <Tooltip desc="Parties créées mais pas lancées" width="20"/>
     </div>
     <div class="public-games-cards">
-      <Game @click="launchGame(game.id)" v-for="game in createdGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie"
+      <Game @click="launchGame(game.playedGamesId)" v-for="game in createdGames" :level="game.level" :key="game.playedGamesId" :serie="game.serie"
             class="card"/>
     </div>
   </div>

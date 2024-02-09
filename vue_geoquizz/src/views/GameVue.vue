@@ -36,6 +36,8 @@ import { GameProgression } from '@/utils/types' // @TODO: à utiliser pour gerer
 export default {
   data() {
     return {
+      game: null,
+      photos: null,
       currentMarker: null,
       showPopup: false,
       distanceBtwPoints: 0,
@@ -45,20 +47,49 @@ export default {
       imageUrl: '',
       initialCenter: [48.693623, 6.183672],
       gameProgression: {} as GameProgression,
-      roundsData: [
-        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy.jpg' },
-        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy2.jpg' },
-        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy3.jpg' },
-        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy4.jpg' },
-        { coords: [48.693623, 6.183672], imageUrl: '/img/Nancy5.jpg' }
-      ],
+      roundsData: [],
       actualRound: null,
       originalPosition: [],
       map: null
     }
   },
+  created() {
+    //TODO: récup aussi le inital center avec directus serie CityCenter
+    this.$api.get(`games/${this.$route.params.id}`).then( resp => {
+      console.log(" données de jeu ",resp.data)
+      this.game = resp.data;
+      this.photos = JSON.parse(this.game.photos)
+      //this.game.photos.replace("[",'')
+      //this.game.photos.replace("]",'')
+      this.photos.forEach((photo) => {
+        this.$api.get(`/photos/${photo}`).then( resp2 => {
+          //console.log("resp2 ", resp2);
+          const coordinates = resp2.data.data.coordinates.split(',').map(function(coord) {
+            return parseFloat(coord);
+          });
+          //console.log("coordinates ", coordinates)
+          this.roundsData.push({
+            coords : coordinates,
+            imageUrl : resp2.data.data.imageUrl
+          })
+        })
+      })
+      console.log( "rounds Data ", this.roundsData)
+    }).catch(err => {
+      console.log("erreur dans le get games ", err)
+    })
+
+    //mettre le status à 1
+    this.$api.put(`games/${this.$route.params.id}`, {
+        status: 1
+    }).then(resp => {
+      console.log(" changement du status à 1 = en cours, ", resp.data)
+    }).catch (err => {
+      console.log("erreur dans le changement de status", err)
+    })
+
+  },
   mounted() {
-    console.log("route id ", this.$route.params.id)
     // this.ws.init();
     this.actualRound = this.roundsData.shift()
     console.log(this.actualRound)
