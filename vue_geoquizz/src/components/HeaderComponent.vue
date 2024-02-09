@@ -1,19 +1,7 @@
-<script>
-import { mapState, mapActions } from 'pinia'
+<script setup lang="ts">
 import { useUserStore } from '@/store/user'
 
-export default {
-  computed: {
-    ...mapState(useUserStore, ['user','isLoggedIn'])
-  },
-  methods: {
-    ...mapActions(useUserStore, ['logoutUser']),
-    logout() {
-      this.logoutUser()
-      this.$router.push('/connexion')
-    }
-  }
-}
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -24,9 +12,9 @@ export default {
         <ul>
           <li><router-link to="/">Accueil</router-link></li>
           <li><router-link to="/jeu">Jouer</router-link></li>
-          <li v-if="this.isLoggedIn"><router-link to="/profil">Profil</router-link></li>
-          <li v-if="this.isLoggedIn" @click="logout()"><router-link to="/connexion">Deconnexion</router-link></li>
-          <li v-if="!this.isLoggedIn"><router-link to="/connexion">Connexion</router-link></li>
+          <li v-if="userStore.isLoggedIn"><router-link to="/profil">Profil</router-link></li>
+          <li v-if="userStore.isLoggedIn" @click="userStore.logoutUser()"><router-link to="/connexion">Deconnexion</router-link></li>
+          <li v-if="!userStore.isLoggedIn"><router-link to="/connexion">Connexion</router-link></li>
         </ul>
       </nav>
     </div>

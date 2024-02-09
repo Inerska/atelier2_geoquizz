@@ -83,10 +83,10 @@ final class CreateGameAction extends AbstractAction
             $this->entityManager->persist($playedGame);
             $this->entityManager->flush();
         } catch (NotSupported $e) {
-            $request->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
             return $response->withStatus(500);
         } catch (ORMException $e) {
-            $request->getBody()->write(json_encode(['error' => 'ORM exception'], JSON_THROW_ON_ERROR));
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()], JSON_THROW_ON_ERROR));
             return $response->withStatus(500);
         }
 

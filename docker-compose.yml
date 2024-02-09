@@ -71,8 +71,8 @@ services:
     ports:
       - "81:81"
     volumes:
-      - /app/node_modules
       - ./vue_geoquizz:/app
+      - /app/node_modules
     working_dir: /app
     networks:
       - geoquizz_net

@@ -1,9 +1,9 @@
 FROM node:18-alpine AS build
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install -g pnpm
-RUN pnpm install
+COPY package*.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm && pnpm install
 
 COPY . .
 

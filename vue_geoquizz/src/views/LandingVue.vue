@@ -6,7 +6,6 @@ import FooterComponent from '@/components/FooterComponent.vue'
 import {ws} from '@/utils/WebSocketService'
 // import CreateGameComponent from "@/components/CreateGameComponent.vue";
 // import axios from 'axios'
-import {mapActions, mapState} from 'pinia'
 import {useUserStore} from '@/store/user'
 
 export default {
@@ -32,6 +31,7 @@ export default {
     }
   },
   created() {
+    const userStore = useUserStore();
     this.$api.get('/games')
         .then(resp => {
           //this.seriesList = resp.data.data
@@ -46,8 +46,8 @@ export default {
       console.log(err)
     })
 
-    if (this.getProfileId !== null) {
-      this.$api.get(`profiles/${this.getProfileId}/playedGames/`)
+    if (userStore.getProfileId !== null) {
+      this.$api.get(`profiles/${userStore.getProfileId}/playedGames/`)
           .then(resp => {
             //console.log("toutes les Games ", resp.data)
             resp.data.forEach(game => {
@@ -79,16 +79,13 @@ export default {
     })
 
   },
-  computed: {
-    ...mapState(useUserStore, ['getProfileId']),
-  },
   methods: {
     createGame() {
       //console.log('createGame')
       this.$api.post('/games', {
         serie_id: this.newGame.serie_id,
         level_id: this.newGame.level_id,
-        profile_id: this.getProfileId,
+        profile_id: useUserStore().getProfileId,
         is_public: this.newGame.public
       }).then(resp => {
         //console.log("createGame, id du playedGame ", resp.data)
