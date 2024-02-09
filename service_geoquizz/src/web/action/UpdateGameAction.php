@@ -61,7 +61,7 @@ final class UpdateGameAction extends AbstractAction
         if ($playedGame->getStatus() === 1) {
             $profile = $playedGame->getProfile();
 
-            $profile->setActualGame($playedGame);
+            $profile->setActualGame($playedGame->getGame());
         }
 
         try {
