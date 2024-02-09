@@ -1,4 +1,3 @@
-Nv v
 <script lang="ts">
 import Game from "@/components/Game.vue"
 import * as L from "leaflet";
@@ -93,9 +92,40 @@ methods: {
           <label for="public">Publique ? </label>
           <button @click="createGame()" class="new-game-button">Lancer</button>
         </div>
-        <div class="info">
-          Dans GeoQuizz, tu devras localiser des lieux sur une carte à partir d'images !
-        </div>
+		<div class="info">
+			<span>Dans <b>GeoQuizz</b>, tu devras localiser des lieux sur une carte à partir d'images !</span>
+			<br>
+			<span><b>Règle du jeu :</b></span>
+			<ul>
+				<li>
+				<span>Une partie consiste en une séquence de <b>photos</b> issues aléatoirement d'une même série, à placer sur la carte d'une ville,</span>
+				</li>
+				<li>
+				<span>Une série est un ensemble de photos concernant la <b>même ville</b> et la même carte ; une série peut contenir un nombre arbitraire de photos.</span>
+				</li>
+				<li>
+				<span>Chaque réponse permet de gagner un certain nombre de points, en fonction de la <b>précision du placement</b> et de la <b>rapidité pour répondre</b>,</span>
+				</li>
+				<li>
+				<span>L'objectif pour une partie est d'<b>obtenir le maximum de points</b>.</span>
+				</li>
+				<li>
+				<span>La partie est terminée lorsque les <b>photos ont été positionnées</b>.</span>
+				</li>
+			</ul>
+			<span><b>Règles de calcul des points :</b></span>
+			<ul>
+				<li>
+				  <span>Pour 1 réponse placée à une distance <b>inférieur à 100m</b> : <b>5pts</b></span>
+				</li>
+				<li>
+				  <span>Pour 1 réponse placée à une distance <b>inférieur à 200m</b> : <b>3pts</b></span>
+				</li>
+				<li>
+				  <span>Pour 1 réponse placée à une distance <b>inférieur à 300m</b> : <b>1pt</b></span>
+				</li>
+			</ul>
+		  </div>
       </div>
       <div id="map"></div>
     </div>
@@ -197,13 +227,16 @@ methods: {
   font-size: 1em;
   padding: 1em;
   margin-bottom: 1.5em;
-  text-align: center;
+  text-align: left;
   width: 100vw;
   background-color: rgb(51 65 85);
   border-radius: 0px; //8px;
   //width: fit-content;
   margin-left: auto;
   margin-right: auto;
+}
+.info ul li {
+	margin-bottom: 0.2em;
 }
 
 .public-games {

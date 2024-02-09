@@ -16,11 +16,11 @@
           <p class="name">Partie</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">6000</span>
-          <p class="name">Score</p>
+          <span class="value" id="nbGame">354</span>
+          <p class="name">Score Total</p>
         </div>
         <div class="data-stats">
-          <span class="value" id="nbGame">12000</span>
+          <span class="value" id="nbGame">80</span>
           <p class="name">High score</p>
         </div>
       </div>
