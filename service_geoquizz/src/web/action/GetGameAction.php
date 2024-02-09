@@ -38,6 +38,8 @@ final class GetGameAction extends AbstractAction
             return $response->withStatus(404);
         }
 
+        $playedGame = $playedGame[0];
+
         $returnDto = [
             'game' => $gameDto,
             'advancement' => $playedGame->getAdvancement(),
