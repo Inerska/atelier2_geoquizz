@@ -2,9 +2,3 @@
 .vscode
 node_modules
 **/vendor/**
-.env
-
-data-**
-
-series.env
-geoquizz.env
