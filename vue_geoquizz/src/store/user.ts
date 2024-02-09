@@ -1,23 +1,33 @@
 import { defineStore } from 'pinia';
-import { User } from '@/models/User';
 
 export const useUserStore = defineStore('userStore', {
     state() {
         return {
-            user: null as User | null,
+            user : {
+                loggedIn: false,
+                profileId: null,
+                accessToken: null,
+                refreshToken: null,
+            }
         }
     },
     getters: {
         isLoggedIn(state) {
-            return state.user !== null;
+            return state.user.loggedIn;
         }
     },
     actions: {
-        loginUser(user) {
-            this.user = user;
+        loginUser(profileId, accessToken, refreshToken) {
+            this.user.loggedIn = true;
+            this.user.profileId = profileId;
+            this.user.accessToken = accessToken;
+            this.user.refreshToken = refreshToken;
         },
         logoutUser() {
-            this.user = null;
+            this.user.loggedIn = false;
+            this.user.profileId = null;
+            this.user.accessToken = null;
+            this.user.refreshToken = null;
         },
     },
 });

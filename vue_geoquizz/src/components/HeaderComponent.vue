@@ -1,3 +1,21 @@
+<script>
+import { mapState, mapActions } from 'pinia'
+import { useUserStore } from '@/store/user'
+
+export default {
+  computed: {
+    ...mapState(useUserStore, ['isLoggedIn'])
+  },
+  methods: {
+    ...mapActions(useUserStore, ['logoutUser']),
+    logout() {
+      this.logoutUser()
+      this.$router.push('/connexion')
+    }
+  }
+}
+</script>
+
 <template>
   <header class="header">
     <div class="container">
@@ -6,8 +24,9 @@
         <ul>
           <li><router-link to="/">Accueil</router-link></li>
           <li><router-link to="/jouer">Jouer</router-link></li>
-          <li><router-link to="/profil">Profil</router-link></li> <!-- @TODO : Cacher si déconnecté lorsque l'authentification sera géré -->
-          <li><router-link to="/connexion">Connexion</router-link></li> <!-- @TODO : Modifier par Déconnexion lorsque l'authentification sera géré -->
+          <li v-if="this.isLoggedIn"><router-link to="/profil">Profil</router-link></li>
+          <li v-if="this.isLoggedIn" @click="logout()"><router-link to="/connexion">Deconnexion</router-link></li>
+          <li v-if="!this.isLoggedIn"><router-link to="/connexion">Connexion</router-link></li>
         </ul>
       </nav>
     </div>
