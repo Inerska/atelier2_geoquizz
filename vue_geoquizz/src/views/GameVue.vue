@@ -188,7 +188,7 @@ export default {
       return Math.max(0, maxScore - maxScore * (distance / maxDistance))
     },
     onSubmit() {
-      clearInterval(this.timerInterval); // Assurez-vous d'arrêter 
+      clearInterval(this.timerInterval);
 
       if (this.currentMarker) {
         this.showPopup = true
@@ -227,7 +227,7 @@ export default {
      else {
       this.distanceBtwPoints = 0;
       this.score = 0;
-      this.showPopup = true; // Affiche les résultats avec 0 distance et 0 score
+      this.showPopup = true; // Affiche les résultats avec 0 à distance et 0 à score
       this.$nextTick(() => {
         const originalPosition = this.originalPosition
 
