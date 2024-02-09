@@ -50,8 +50,8 @@ class WebSocketService {
                     position: 'bottom-right'
                 });
             }
-            if (event.data === 'endGame') {
-                toast.info("Quelqu'un a finit une partie !", {
+            if ((event.data as string).startsWith('endGame')) {
+                toast.info(`Quelqu'un a finit une partie avec un score de ${event.data.split('&')[1]} !`, {
                     autoClose: 3000,
                     closeButton: true,
                     theme: 'light',
