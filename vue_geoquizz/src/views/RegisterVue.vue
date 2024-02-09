@@ -4,7 +4,11 @@
     <div class="login-container">
       <div class="login-form">
         <h2>Inscription</h2>
-        `<div v-if="errorMessage" class="error">{{errorMessage}}</div>
+        <div v-if="errorMessage" class="error">{{errorMessage}}</div>
+        <div class="form-group">
+          <input v-model="username" type="text" id="username" placeholder=" " required />
+          <label for="username">Nom d'utilisateur</label>
+        </div>
         <div class="form-group">
           <input v-model="mail" type="email" id="email" placeholder=" " required />
           <label for="email">Email</label>
@@ -27,6 +31,8 @@
 <script lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
+import { mapState, mapActions } from 'pinia'
+import { useUserStore } from '@/store/user'
 
 export default {
   components: {
@@ -38,17 +44,22 @@ export default {
       mail : "",
       password : "",
       password2 : "",
+      username: "",
       errorMessage : null
     }
   },
   methods: {
+    ...mapActions(useUserStore, ['loginUser']),
     register() {
       console.log('Inscription !')
       this.$api.post('/register', {
+        username: this.username,
         mail: this.mail,
         password: this.password,
         confirm_password: this.password2
       }).then(resp => {
+
+        this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
         this.errorMessage = null;
         console.log(resp.data)
         this.$router.push('/')
@@ -62,7 +73,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+h2,
+label {
+  color: #333 !important;
+}
 .error {
   color: black;
   background-color: lighten(red, 30%);

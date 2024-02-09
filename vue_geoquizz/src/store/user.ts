@@ -1,23 +1,34 @@
 import { defineStore } from 'pinia';
-import { PartialAuthUser } from '../utils/types';
+import { User } from '@/models/User';
 
 export const useUserStore = defineStore('userStore', {
     state() {
         return {
-            user: null as PartialAuthUser | null,
+            user : {
+                loggedIn: false,
+                profileId: null,
+                accessToken: null,
+                refreshToken: null,
+            }
         }
     },
     getters: {
         isLoggedIn(state) {
-            return state.user !== null;
-        }
+            return state.user.loggedIn;
+        },
+        getProfileId(state) {
+            return state.user.profileId;
+        },
     },
     actions: {
-        loginUser(user: PartialAuthUser) {
+        loginUser(user) {
             this.user = user;
         },
         logoutUser() {
-            this.user = null;
+            this.user.loggedIn = false;
+            this.user.profileId = null;
+            this.user.accessToken = null;
+            this.user.refreshToken = null;
         },
     },
 });

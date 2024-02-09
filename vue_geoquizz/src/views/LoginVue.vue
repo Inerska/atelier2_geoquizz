@@ -1,7 +1,7 @@
 <script lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import { useUserStore } from '@/store/user'
 
 
@@ -10,34 +10,36 @@ export default {
     HeaderComponent,
     FooterComponent
   },
+  computed: {
+    ...mapState(useUserStore, ['user'])
+  },
+  created() {
+    console.log("user dans le created ", this.user)
+  },
   data() {
     return {
-      mail : "",
-      password : "",
-      errorMessage : ""
+      mail: "",
+      password: "",
+      errorMessage: null
     }
   },
   methods: {
+    ...mapActions(useUserStore, ['loginUser']),
     connection() {
       console.log('Connexion !')
       this.$api.post('/login', {
         mail: this.mail,
         password: this.password
       }).then(resp => {
-        const userStore = useUserStore();
-        console.log("resp.data dans la réponse ",resp.data)
-        userStore.loginUser({
-          accessToken: resp.data.refreshToken,
-          refreshToken: resp.data.accessToken,
-        })
-        console.log("user dans le UserStore ", userStore.user)
-      }).catch (err => {
+        console.log(resp.data)
+        this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
+        this.$router.push('/')
+      }).catch(err => {
         console.log(err)
+        this.errorMessage = err.response.data.message
+
       })
     }
-  },
-  created() {
-    console.log("user dans le created ", this.user)
   }
 }
 </script>
@@ -46,9 +48,10 @@ export default {
   <div class="login-page">
     <HeaderComponent />
     <div class="login-container">
-      <div>Test du store :   {{user}} </div>
       <form class="login-form" @submit.prevent="onSubmit">
         <h2>Connexion</h2>
+        <div v-if="errorMessage" class="error">{{errorMessage}}</div>
+
         <div class="form-group">
           <input v-model="mail" type="email" id="email" placeholder=" " required />
           <label for="email">Email</label>
@@ -65,7 +68,16 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+
+.error {
+  color: black;
+  background-color: lighten(red, 30%);
+  padding: 1em;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
 .register {
   font-size: .8em;
   text-align: center;
@@ -73,8 +85,6 @@ export default {
   text-decoration: underline;
 }
 
-
-<style scoped>
 h2,
 label {
   color: #333 !important;

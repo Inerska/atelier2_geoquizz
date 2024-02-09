@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="stats">
-      <h1>Username</h1>
+      <h1>{{ username }}</h1>
       <div class="column-stats">
         <div class="data-stats">
           <span class="value" id="nbGame">10</span>
@@ -30,6 +30,7 @@
         <h2 class="title">Historique des parties</h2>
         <div class="game-container">
           <!-- @TODO : Boucler les données depuis la DB -->
+          <Game v-for="game in playedGames" :serie="game.serie" :photo="game.photo" :level="game.level" :key="game.id" />
           <Game serie="Nancy" photo="/img/Nancy.jpg" level="" />
           <Game serie="Nancy" photo="/img/Nancy2.jpg" level="2" />
           <Game serie="Nancy" photo="/img/Nancy3.jpg" level="2" />
@@ -93,12 +94,28 @@
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 import Game from '@/components/Game.vue'
+import { mapState, mapActions } from 'pinia'
+import { useUserStore } from '@/store/user'
 
 export default {
   components: {
     HeaderComponent,
     FooterComponent,
     Game
+  },
+  computed : {
+    ...mapState(useUserStore, ['getProfileId'])
+  },
+  created() {
+    console.log("user dans le created ", this.user)
+    this.$api.get(`/profiles/${this.getProfileId}`).then(resp => {
+      console.log(resp.data)
+      this.username = resp.data.username
+      this.actualGame = resp.data.actualGame
+      this.playedGames = resp.data.playedGames
+    }).catch(err => {
+      console.log(err)
+    })
   },
   data() {
     return {
@@ -110,7 +127,10 @@ export default {
         '/img/Nancy3.jpg',
         '/img/Nancy4.jpg'
       ],
-      selectedBackground: ''
+      selectedBackground: '',
+      username: "",
+      playedGames : [],
+      actualGame : null
     }
   },
   methods: {
