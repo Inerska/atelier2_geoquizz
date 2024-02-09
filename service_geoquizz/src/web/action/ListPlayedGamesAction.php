@@ -59,7 +59,7 @@ final class ListPlayedGamesAction extends AbstractAction
                 'city' => $city,
                 'level' => $level,
                 'score' => $playedGame->getScore(),
-                'status' => $playedGame->getStatus()
+                'status' => $playedGame->getStatus(),
             ];
         }
 
