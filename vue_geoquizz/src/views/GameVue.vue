@@ -32,7 +32,7 @@
 <script lang="ts">
 import * as L from 'leaflet'
 import { ws } from '@/utils/WebSocketService'
-import { GameProgression, User,  AxiosResponseGame, Game, Photo, CurrentGame, Serie} from '@/utils/types' // @TODO: à utiliser pour gerer et bloquer certains éléments du jeu
+import { GameProgression, User, Game, Photo, CurrentGame, Serie} from '@/utils/types' // @TODO: à utiliser pour gerer et bloquer certains éléments du jeu
 
 export default {
   data() {
@@ -58,9 +58,12 @@ export default {
   async mounted() {
 
     //TODO: récup aussi le inital center avec directus serie CityCenter
-    await this.$api.get(`games/${this.$route.params.id}`).then((resp: AxiosResponseGame) => {
+    await this.$api.get(`games/${this.$route.params.id}`).then((resp) => {
       console.log(" données de jeu ", resp.data)
       this.game = resp.data.game as Game;
+      this.roundNumber = resp.data.advancement;
+      this.roundsData = this.roundsData.slice(resp.data.advancement - 1)
+      console.log("roundsData après slice ", this.roundsData)
       this.photos = JSON.parse(this.game.photos)
       this.totalRounds = this.photos.length;
       this.$api.get(`series/${this.game.serie_id}`).then(resp1 => {
@@ -119,6 +122,11 @@ export default {
   },
   methods: {
     nextRound() {
+      console.log("next ROund !", this.roundNumber)
+      this.$api.put(`games/${this.$route.params.id}`, {
+        score: this.totalScore,
+        advancement: this.roundNumber
+      })
       if (this.roundsData.length > 0 && this.roundNumber < 10) {
         this.actualRound = this.roundsData.shift()
         this.imageUrl = this.actualRound.imageUrl
@@ -290,7 +298,7 @@ span {
   width: 100%;
 }
 .dynamic-image {
-  width: 50vw;
+  width: 70vw;
   margin-left: auto;
   margin-right: auto;
   max-height: 100%;
