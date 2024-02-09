@@ -13,7 +13,7 @@
     <button :disabled="!currentMarker" @click="onSubmit">Confirmer</button>
   </div>
   <div class="pause">
-    <button @click="pauseGame">Mettre en pause</button>
+    <button @click="pause()">Mettre en pause</button>
   </div>
   <div class="player">
     <img class="avatar" src="/avatar.svg" />

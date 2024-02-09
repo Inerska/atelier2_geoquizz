@@ -21,7 +21,7 @@ export default {
       gamesList: [],
       seriesList: [],
       levelsList: [],
-      currentGame: null,
+      currentGames: [],
       newGame: {
         serie_id: "",
         level_id: "",
@@ -55,12 +55,12 @@ export default {
                 this.createdGames.push(game)
               }
               if (game.status == 1) {
-                this.currentGame = game
-                console.log(game)
+                this.currentGames.push(game)
+                console.log("currentGame qui a été push ",game)
               }
             })
           }).catch(err => {
-        console.log(err.response)
+        console.log(err)
       })
     }
 
@@ -130,7 +130,18 @@ export default {
         <button @click="createGame()" class="new-game-button">Lancer</button>
       </div>
     </div>
-    <div v-if="currentGame" class="current-game">
+<!--    <div v-if="currentGames.length >0" class="current-game" v-for="currentGame in currentGames">
+      <div @click="launchGame(currentGame.playedGamesId)" class="current-game-card">
+        &lt;!&ndash; TODO: aller fetch li'mage correspondante &ndash;&gt;
+        <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
+        <div class="current-game-button-1"> {{currentGame.city}}</div>
+        <div class="current-game-button-2"> Continuer la partie</div>
+      </div>
+    </div>-->
+  </div>
+
+  <div class="started-games">
+    <div v-if="currentGames.length >0" class="current-game" v-for="currentGame in currentGames">
       <div @click="launchGame(currentGame.playedGamesId)" class="current-game-card">
         <!-- TODO: aller fetch li'mage correspondante -->
         <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
@@ -139,6 +150,7 @@ export default {
       </div>
     </div>
   </div>
+
 
   <div class="all-series">
     <div class="title">
