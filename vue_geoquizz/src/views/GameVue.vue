@@ -16,7 +16,7 @@
     <img class="avatar" src="/avatar.svg" />
     <div class="progression">
       <p class="text">Score : {{ totalScore }}</p>
-      <p class="text">Round : {{ roundNumber }}/10</p>
+      <p class="text">Round : {{ roundNumber }}/ {{totalRounds}}</p>
     </div>
   </div>
   <div v-if="showPopup" class="leaflet-popup">
@@ -51,25 +51,29 @@ export default {
       roundsData: [] as Photo[],
       actualRound: null as CurrentGame,
       originalPosition: [],
-      map: null
+      map: null,
+      totalRounds : 0
     }
   },
-  created() {
+  async mounted() {
+
     //TODO: récup aussi le inital center avec directus serie CityCenter
-    this.$api.get(`games/${this.$route.params.id}`).then((resp: AxiosResponseGame) => {
-      console.log(" données de jeu ",resp.data)
+    await this.$api.get(`games/${this.$route.params.id}`).then((resp: AxiosResponseGame) => {
+      console.log(" données de jeu ", resp.data)
       this.game = resp.data.game as Game;
-      console.log(this.game)
       this.photos = JSON.parse(this.game.photos)
+      this.totalRounds = this.photos.length;
+      this.$api.get(`series/${this.game.serie_id}`).then(resp1 => {
+        this.initialCenter = resp1.data.data.cityCenter.toString().split(',');
+        console.log("city Center dans le série ", this.initialCenter)
+      })
       //this.game.photos.replace("[",'')
       //this.game.photos.replace("]",'')
-      this.photos.forEach((photo: Photo) => {
-        this.$api.get(`/photos/${photo.id}`).then( resp2 => {
+      this.photos.forEach((photo) => {
+        this.$api.get(`/photos/${photo}`).then( resp2 => {
           //console.log("resp2 ", resp2);
-          const coordinates = resp2.data.data.coordinates.split(',').map(function(coord) {
-            return parseFloat(coord);
-          });
-          //console.log("coordinates ", coordinates)
+          let coordinates = resp2.data.data.coordinates.split(',').map(coord => parseFloat(coord));
+          console.log("coordinates ", coordinates)
           this.roundsData.push({
             coords : coordinates,
             imageUrl : resp2.data.data.imageUrl
@@ -77,27 +81,27 @@ export default {
         })
       })
       console.log( "rounds Data ", this.roundsData)
+
     }).catch(err => {
       console.log("erreur dans le get games ", err)
     })
 
     //mettre le status à 1
-    this.$api.put(`games/${this.$route.params.id}`, {
-        status: 1
+    await this.$api.put(`games/${this.$route.params.id}`, {
+      status: 1
     }).then(resp => {
-      console.log(" changement du status à 1 = en cours, ", resp.data)
+      //console.log(" changement du status à 1 = en cours, ", resp.data)
     }).catch (err => {
       console.log("erreur dans le changement de status", err)
     })
-
-  },
-  mounted() {
     // this.ws.init();
-    this.actualRound = this.roundsData.shift()
-    console.log(this.actualRound)
-    this.originalPosition = this.actualRound.coords
-    this.imageUrl = this.actualRound.imageUrl
-    this.roundNumber += 1
+    console.log("this roundsData dans le mounted", this.roundsData);
+    this.actualRound = this.roundsData.shift();
+    console.log("actualRound", this.actualRound);
+    this.originalPosition = this.actualRound.coords;
+    //this.initialCenter = this.game.initialCenter;
+    this.imageUrl = this.actualRound.imageUrl;
+    this.roundNumber += 1;
 
     this.map = L.map('map').setView(this.initialCenter, 13).setMinZoom(12)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -158,7 +162,7 @@ export default {
             })
           L.marker(userPosition, {
             icon: L.divIcon({
-              html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border-radius: 50%" />'
+              html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border: 1px solid red; border-radius: 50%" />'
             })
           })
             .bindTooltip('Votre choix', { permanent: true, direction: 'top' })
@@ -286,7 +290,9 @@ span {
   width: 100%;
 }
 .dynamic-image {
-  width: auto;
+  width: 50vw;
+  margin-left: auto;
+  margin-right: auto;
   max-height: 100%;
   object-fit: cover;
   overflow: hidden;

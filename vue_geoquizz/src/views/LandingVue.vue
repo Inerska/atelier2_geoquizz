@@ -51,11 +51,12 @@ export default {
           .then(resp => {
             //console.log("toutes les Games ", resp.data)
             resp.data.forEach(game => {
-              if (game.status === 0 ) {
+              if (game.status == 0 ) {
                 this.createdGames.push(game)
               }
-              if (game.status === 1) {
-                this.currentGame = resp.data.actualGame
+              if (game.status == 1) {
+                this.currentGame = game
+                console.log(game)
               }
             })
           }).catch(err => {
@@ -130,24 +131,12 @@ export default {
       </div>
     </div>
     <div v-if="currentGame" class="current-game">
-      <div class="current-game-card">
+      <div @click="launchGame(currentGame.playedGamesId)" class="current-game-card">
+        <!-- TODO: aller fetch li'mage correspondante -->
         <img alt="NYC" class="current-game-img" src="/img/nyc.jpg"/>
-        <div class="current-game-button-1"> MONTPELLIER</div>
+        <div class="current-game-button-1"> {{currentGame.city}}</div>
         <div class="current-game-button-2"> Continuer la partie</div>
       </div>
-    </div>
-  </div>
-
-
-  <div  v-if="createdGames.length > 0"  class="public-games">
-    {{createdGames}}
-    <div class="title">
-      <h2>Vos parties créées </h2>
-      <Tooltip desc="Parties créées mais pas lancées" width="20"/>
-    </div>
-    <div class="public-games-cards">
-      <Game @click="launchGame(game.playedGamesId)" v-for="game in createdGames" :level="game.level" :key="game.playedGamesId" :serie="game.serie"
-            class="card"/>
     </div>
   </div>
 
