@@ -241,7 +241,7 @@ export default {
               })
           L.marker(userPosition, {
             icon: L.divIcon({
-              html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border: 1px solid red; border-radius: 50%" />'
+              html: '<img src="/avatar.svg" style="height: 40px; width: 40px; border: 3px solid red; border-radius: 50%" />'
             })
           })
               .bindTooltip('Votre choix', {permanent: true, direction: 'top'})
