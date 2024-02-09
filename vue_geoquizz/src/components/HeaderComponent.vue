@@ -4,7 +4,7 @@ import { useUserStore } from '@/store/user'
 
 export default {
   computed: {
-    ...mapState(useUserStore, ['isLoggedIn'])
+    ...mapState(useUserStore, ['user','isLoggedIn'])
   },
   methods: {
     ...mapActions(useUserStore, ['logoutUser']),

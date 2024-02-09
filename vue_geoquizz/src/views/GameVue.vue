@@ -58,6 +58,7 @@ export default {
     }
   },
   mounted() {
+    console.log("route id ", this.$route.params.id)
     // this.ws.init();
     this.actualRound = this.roundsData.shift()
     console.log(this.actualRound)

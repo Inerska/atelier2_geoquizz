@@ -27,6 +27,7 @@ export default {
         level_id: "",
         public: false
       },
+      createdGames: [],
       publicGames: []
     }
   },
@@ -46,12 +47,19 @@ export default {
     })
 
     if (this.getProfileId !== null) {
-      this.$api.get(`profiles/${this.getProfileId}`)
+      this.$api.get(`profiles/${this.getProfileId}/playedGames/`)
           .then(resp => {
-            this.currentGame = resp.data.actualGame
-            //console.log( "profile infos ",resp.data)
+            console.log("toutes les Games ", resp.data)
+            resp.data.forEach(game => {
+              if (game.status === 0 ) {
+                this.createdGames.push(game)
+              }
+              if (game.status === 1) {
+                this.currentGame = resp.data.actualGame
+              }
+            })
           }).catch(err => {
-        console.log(err)
+        console.log(err.response)
       })
     }
 
@@ -90,6 +98,9 @@ export default {
     },
     linkSerie(id) {
       this.$router.push("/serie/" + id)
+    },
+    launchGame(id) {
+      this.$router.push(`/jeu/${id}`)
     }
   }
 }
@@ -124,6 +135,18 @@ export default {
         <div class="current-game-button-1"> MONTPELLIER</div>
         <div class="current-game-button-2"> Continuer la partie</div>
       </div>
+    </div>
+  </div>
+
+
+  <div  v-if="createdGames.length > 0"  class="public-games">
+    <div class="title">
+      <h2>Vos parties créées </h2>
+      <Tooltip desc="Parties créées mais pas lancées" width="20"/>
+    </div>
+    <div class="public-games-cards">
+      <Game @click="launchGame(game.id)" v-for="game in createdGames" :level="game.level" :key="game.id" :link="game.id" :serie="game.serie"
+            class="card"/>
     </div>
   </div>
 

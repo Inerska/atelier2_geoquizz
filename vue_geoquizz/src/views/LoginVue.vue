@@ -13,9 +13,6 @@ export default {
   computed: {
     ...mapState(useUserStore, ['user'])
   },
-  created() {
-    console.log("user dans le created ", this.user)
-  },
   data() {
     return {
       mail: "",
@@ -31,13 +28,13 @@ export default {
         mail: this.mail,
         password: this.password
       }).then(resp => {
-        console.log(resp.data)
+        //console.log( "data dans login ", resp.data)
         this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
+        //console.log( "pinia dans login  ", this.user)
         this.$router.push('/')
       }).catch(err => {
         console.log(err)
         this.errorMessage = err.response.data.message
-
       })
     }
   }
