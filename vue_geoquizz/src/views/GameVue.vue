@@ -134,6 +134,14 @@ export default {
     ws.sendMessage('newGame')
   },
   methods: {
+    pause() {
+      this.$api.put(`/games/${this.$route.params.id}`, {
+        status: 1,
+        score: this.totalScore,
+        advancement: this.roundNumber
+      })
+      this.$router.push("/")
+    },
     startTimer() {
       if (this.timerInterval) {
         clearInterval(this.timerInterval); // Effacez l'intervalle existant avant d'en démarrer un nouveau
