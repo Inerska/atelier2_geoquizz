@@ -86,6 +86,6 @@ final class CreateGameAction extends AbstractAction
         $photosCount = $photosCountData['data']['photoCount'] ?? count($photos);
 
         shuffle($photos);
-        return array_slice($photos, 0, $photosCount);
+        return array_slice($photos, 0, (int)$photosCount);
     }
 }
