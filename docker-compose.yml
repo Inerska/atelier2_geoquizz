@@ -6,7 +6,7 @@ services:
     image: "adminer:latest"
     container_name: "geoquizz-adminer"
     ports:
-      - "8085:8080"
+      - "42372:8080"
     networks:
       - geoquizz_net
 
@@ -16,7 +16,7 @@ services:
     env_file:
       - series.env
     ports:
-      - "8055:8055"
+      - "42373:8055"
     depends_on:
       - series_postgres
     networks:
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./data-series:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "42374:5432"
     networks:
       - geoquizz_net
 
@@ -38,8 +38,8 @@ services:
     image: "canals/php:8.2"
     container_name: "service_geoquizz"
     ports:
-      - '2082:80'
-      - '2444:443'
+      - '42375:80'
+      - '42376:443'
     env_file:
       - geoquizz.env
     volumes:
@@ -59,7 +59,7 @@ services:
     volumes:
       - ./data-service-geoquizz:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "42377:5432"
     networks:
       - geoquizz_net
 
@@ -69,10 +69,10 @@ services:
       dockerfile: Dockerfile
     container_name: "vue_geoquizz"
     ports:
-      - "81:81"
+      - "42378:81"
     volumes:
-      - /app/node_modules
       - ./vue_geoquizz:/app
+      - /app/node_modules
     working_dir: /app
     networks:
       - geoquizz_net
@@ -85,7 +85,7 @@ services:
       dockerfile: Dockerfile
     container_name: "gateway_nginx"
     ports:
-      - "8084:80"
+      - "42379:80"
     networks:
       - geoquizz_net
     volumes:
@@ -105,7 +105,7 @@ services:
       - ./auth_geoquizz:/var/www
     working_dir: /var/www
     ports:
-      - "8081:80"
+      - "42380:80"
     depends_on:
       - auth_postgres
     networks:
@@ -118,6 +118,16 @@ services:
       - auth.env
     volumes:
       - ./data-auth:/var/lib
+    networks:
+      - geoquizz_net
+
+  websocket_geoquizz:
+    build:
+      context: websocket_geoquizz
+      dockerfile: Dockerfile
+    container_name: "websocket_geoquizz"
+    ports:
+      - "42381:5200"
     networks:
       - geoquizz_net
 

@@ -6,7 +6,9 @@ namespace geoquizz\service\web\action;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
+use geoquizz\service\domain\dto\ProfileDto;
 use geoquizz\service\infrastructure\action\AbstractAction;
+use geoquizz\service\infrastructure\persistence\entity\Game;
 use geoquizz\service\infrastructure\persistence\entity\Profile;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,17 +25,19 @@ final class GetProfileAction extends AbstractAction
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $args): ResponseInterface
     {
-        $id = $args['id'];
-        $profile = $this->entityManager->getRepository(Profile::class)->find($id);
-
+        try {
+            $profile = $this->entityManager->getRepository(Profile::class)->find($args['id']);
+        } catch (NotSupported $e) {
+            $request->getBody()->write(json_encode(['error' => 'Not supported'], JSON_THROW_ON_ERROR));
+            return $response->withStatus(500);
+        }
         if ($profile === null) {
-            $request->getBody()->write(json_encode(['error' => 'Profile not found'], JSON_THROW_ON_ERROR));
             return $response->withStatus(404);
         }
 
-        $request->getBody()->write(json_encode($profile, JSON_THROW_ON_ERROR));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(200);
+        $dto = new ProfileDto($profile);
+
+        $response->getBody()->write(json_encode($dto, JSON_THROW_ON_ERROR));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 }

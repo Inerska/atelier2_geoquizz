@@ -4,8 +4,10 @@ import SerieVue from "@/views/SerieVue.vue";
 import ProfileVue from "@/views/ProfileVue.vue";
 import LoginVue from "@/views/LoginVue.vue";
 import GameVue from "@/views/GameVue.vue";
+import RegisterVue from "@/views/RegisterVue.vue";
 
 const router = createRouter({
+    //@ts-ignore
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
@@ -14,7 +16,7 @@ const router = createRouter({
             component: LandingVue
         },
         {
-            path: '/jeu',
+            path: '/jeu/:id',
             name: 'game',
             component: GameVue
         },
@@ -22,6 +24,11 @@ const router = createRouter({
             path: '/connexion',
             name: 'login',
             component: LoginVue
+        },
+        {
+            path: '/inscription',
+            name: 'register',
+            component: RegisterVue
         },
         {
             path: '/profil',

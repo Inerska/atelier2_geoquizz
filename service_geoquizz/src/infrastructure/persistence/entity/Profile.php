@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace geoquizz\service\infrastructure\persistence\entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\OneToMany;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\InverseJoinColumn;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
-final class Profile
+class Profile
 {
     #[Id, GeneratedValue(strategy: 'IDENTITY')]
     #[Column]
@@ -22,18 +26,63 @@ final class Profile
     #[Column]
     private string $username;
 
-    #[Column]
-    private string $email;
+    #[Column(name: 'actual_game_id', type: 'integer', nullable: true)]
+    private ?int $actualGameId = null;
+
+    #[ManyToMany(targetEntity: PlayedGame::class)]
+    #[JoinTable(name: 'profile_savedgames')]
+    #[JoinColumn(name: 'profile_id', referencedColumnName: 'id')]
+    #[InverseJoinColumn(name: 'playedgame_id', referencedColumnName: 'id')]
+    private Collection $savedGames;
+
+    public function getAvatarName(): string
+    {
+        return $this->avatar_name;
+    }
+
+    public function setAvatarName(string $avatar_name): void
+    {
+        $this->avatar_name = $avatar_name;
+    }
+
+    public function getWallpaperName(): string
+    {
+        return $this->wallpaper_name;
+    }
+
+    public function setWallpaperName(string $wallpaper_name): void
+    {
+        $this->wallpaper_name = $wallpaper_name;
+    }
 
     #[Column]
-    private string $firstname;
+    private string $avatar_name;
 
     #[Column]
-    private string $lastname;
-    #[Column(name: 'actualGame'), OneToOne(targetEntity: 'Game')]
-    private Game $actualGame;
-    #[Column(name: 'savedGames'), OneToMany(targetEntity: 'PlayedGame')]
-    private array $savedGames;
+    private string $wallpaper_name;
+
+    public function __construct()
+    {
+        $this->savedGames = new ArrayCollection();
+    }
+
+    public function getActualGameId(): ?int
+    {
+        return $this->actualGameId;
+    }
+
+    public function setActualGameId(?int $actualGameId): void
+    {
+        $this->actualGameId = $actualGameId;
+    }
+
+    public function addSavedGame(PlayedGame $playedGame): void
+    {
+        if (!$this->savedGames->contains($playedGame)) {
+            $this->savedGames->add($playedGame);
+            $playedGame->setProfile($this);
+        }
+    }
 
     /**
      * @return int
@@ -67,83 +116,17 @@ final class Profile
         $this->username = $username;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstname(): string
-    {
-        return $this->firstname;
-    }
-
-    /**
-     * @param string $firstname
-     */
-    public function setFirstname(string $firstname): void
-    {
-        $this->firstname = $firstname;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastname(): string
-    {
-        return $this->lastname;
-    }
-
-    /**
-     * @param string $lastname
-     */
-    public function setLastname(string $lastname): void
-    {
-        $this->lastname = $lastname;
-    }
-
-    /**
-     * @return Game
-     */
-    public function getActualGame(): Game
-    {
-        return $this->actualGame;
-    }
-
-    /**
-     * @param Game $actualGame
-     */
-    public function setActualGame(Game $actualGame): void
-    {
-        $this->actualGame = $actualGame;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSavedGames(): array
+    public function getSavedGames(): Collection
     {
         return $this->savedGames;
     }
 
     /**
-     * @param array $savedGames
+     * @param Collection $savedGames
      */
-    public function setSavedGames(array $savedGames): void
+    public function setSavedGames(Collection $savedGames): void
     {
         $this->savedGames = $savedGames;
     }
+
 }

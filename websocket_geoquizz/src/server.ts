@@ -1,9 +1,7 @@
-import express from 'express';
 import http from 'http';
 import WebSocket from 'ws';
 
-const app = express();
-const server = http.createServer(app);
+const server = http.createServer();
 
 const wss = new WebSocket.Server({ server });
 
@@ -14,7 +12,14 @@ wss.on('connection', (ws: WebSocket) => {
         const message = isBinary ? data : data.toString();
         console.log(message)
 
-        // if (message === 'newGame')
+        if (message === 'newGame')
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(message);
+            }
+        });
+        
+        if (message.toString().startsWith('endGame'))
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
                 client.send(message);

@@ -22,20 +22,24 @@ final class UpdateProfileAction extends AbstractAction
         $profile = $this->entityManager->getRepository(Profile::class)->find($id);
 
         if ($profile === null) {
-            $request->getBody()->write(json_encode(['error' => 'Profile not found'], JSON_THROW_ON_ERROR));
+            $response->getBody()->write(json_encode(['error' => 'Profile not found'], JSON_THROW_ON_ERROR));
             return $response->withStatus(404);
         }
 
         $data = json_decode($request->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        $profile->setUsername($data['username']);
-        $profile->setEmail($data['email']);
-        $profile->setFirstname($data['firstname']);
-        $profile->setLastname($data['lastname']);
+
+        if (isset($data['avatar'])) {
+            $profile->setAvatarName($data['avatar']);
+        }
+
+        if (isset($data['background'])) {
+            $profile->setWallpaperName($data['background']);
+        }
 
         $this->entityManager->persist($profile);
         $this->entityManager->flush();
 
-        $request->getBody()->write(json_encode($profile, JSON_THROW_ON_ERROR));
+        $response->getBody()->write(json_encode($profile, JSON_THROW_ON_ERROR));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 }

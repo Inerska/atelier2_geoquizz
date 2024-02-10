@@ -19,11 +19,16 @@ export default defineConfig({
                 target: 'http://gateway_nginx:80',
                 rewrite: path => path.replace(/^\/gateway/, ''),
             },
+            '/ws_gateway': {
+                target: 'ws://websocket_geoquizz',
+                ws: true,
+                rewrite: path => path.replace(/^\/ws_gateway/, ''),
+            }
         }
     },
     resolve: {
         alias: {
-          '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
     build: {

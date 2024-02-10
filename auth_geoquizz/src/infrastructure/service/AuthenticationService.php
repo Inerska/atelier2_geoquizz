@@ -6,13 +6,13 @@ namespace geoquizz\auth\infrastructure\service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
-use Doctrine\ORM\Exception\ORMException;
 use geoquizz\auth\domain\dto\CredentialDTO;
 use geoquizz\auth\domain\exception\AuthenticationException;
 use geoquizz\auth\domain\exception\TokenException;
 use geoquizz\auth\domain\service\AuthenticationServiceInterface;
 use geoquizz\auth\domain\service\TokenManagementServiceInterface;
 use geoquizz\auth\infrastructure\persistence\Account;
+use GuzzleHttp\Client;
 
 /**
  * Class for managing the authentication
@@ -27,10 +27,9 @@ final class AuthenticationService implements AuthenticationServiceInterface
      */
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly TokenManagementServiceInterface $tokenManagementService
+        private readonly TokenManagementServiceInterface $tokenManagementService,
+        private readonly Client $client
     ){}
-
-
 
     /**
      * Sign in the user
@@ -61,7 +60,8 @@ final class AuthenticationService implements AuthenticationServiceInterface
 
         return [
             'accessToken' => $accessToken,
-            'refreshToken' => $refreshToken
+            'refreshToken' => $refreshToken,
+            'profileId' => $account->profileId
         ];
     }
 
@@ -85,8 +85,22 @@ final class AuthenticationService implements AuthenticationServiceInterface
             throw new AuthenticationException('Account with this mail already exist', 409);
         }
 
+        if ($credential->password != $credential->confirmPassword) {
+            throw new AuthenticationException('Les deux mots de passe ne sont pas pareils', 400);
+        }
+        $data = [
+            'username' => $credential->username,
+        ];
+
+        $response = $this->client->request('POST', 'http://gateway_nginx/api/v1/profiles/', [
+            'body' => json_encode($data)
+        ]);
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        $profileId = (int)$json['id'];
+
         $hashedPassword = password_hash($credential->password, PASSWORD_ARGON2ID);
-        $account = new Account($credential->mail, $hashedPassword);
+        $account = new Account($credential->mail, $hashedPassword, $profileId);
 
         $tokens = $this->tokenManagementService->getTokens($account);
         $accessToken = $tokens['accessToken'];
@@ -94,7 +108,8 @@ final class AuthenticationService implements AuthenticationServiceInterface
 
         return [
             'accessToken' => $accessToken,
-            'refreshToken' => $refreshToken
+            'refreshToken' => $refreshToken,
+            'profileId' => $profileId
         ];
 
     }

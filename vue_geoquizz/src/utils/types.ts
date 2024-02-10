@@ -29,9 +29,29 @@ export type Game = {
     date: string;
     status: 'archived' | 'in_progress' | 'finished';
     public: boolean;
+    photos: Photo[];
+    advancement: number;
 }
 export type CurrentGame = {
     game: Game;
     serie: Serie;
     advancements: Photo[];
+}
+export type User = {
+    id: number;
+    username: string;
+    email: string;
+    avatar: string;
+    totalScore: number;
+    gamesPlayed: number;
+    accessToken: string;
+    refreshToken: string;
+}
+export type PartialAuthUser = {
+    id: number;
+    accessToken: string;
+    refreshToken: string;
+}
+export type GameProgression = {
+    status: 'in_progress' | 'pause' | 'inter_serie' | 'finished';
 }

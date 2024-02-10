@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useUserStore } from '@/store/user'
+
+const userStore = useUserStore()
+</script>
+
 <template>
   <header class="header">
     <div class="container">
@@ -5,9 +11,9 @@
       <nav class="nav">
         <ul>
           <li><router-link to="/">Accueil</router-link></li>
-          <li><router-link to="/jouer">Jouer</router-link></li>
-          <li><router-link to="/profil">Profil</router-link></li> <!-- @TODO : Cacher si déconnecté lorsque l'authentification sera géré -->
-          <li><router-link to="/connexion">Connexion</router-link></li> <!-- @TODO : Modifier par Déconnexion lorsque l'authentification sera géré -->
+          <li v-if="userStore.isLoggedIn"><router-link to="/profil">Profil</router-link></li>
+          <li v-if="userStore.isLoggedIn" @click="userStore.logoutUser()"><router-link to="/connexion">Deconnexion</router-link></li>
+          <li v-if="!userStore.isLoggedIn"><router-link to="/connexion">Connexion</router-link></li>
         </ul>
       </nav>
     </div>
@@ -25,6 +31,7 @@
 .container {
   display: flex;
   justify-content: space-between;
+  flex-direction: row;
   align-items: center;
   width: 100%;
 }
@@ -32,7 +39,7 @@
 .logo {
   font-size: 24px;
   font-weight: bold;
-  color: #000;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -50,7 +57,7 @@
 }
 
 .nav ul li a {
-  color: #000;
+  color: #ffffff;
   text-decoration: none;
 }
 

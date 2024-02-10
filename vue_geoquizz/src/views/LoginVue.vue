@@ -1,42 +1,91 @@
-<template>
-  <div class="login-page">
-    <HeaderComponent />
-    <div class="login-container">
-      <form class="login-form" @submit.prevent="onSubmit">
-        <h2>Connexion</h2>
-        <div class="form-group">
-          <input type="email" id="email" placeholder=" " required />
-          <label for="email">Email</label>
-        </div>
-        <div class="form-group">
-          <input type="password" id="password" placeholder=" " required />
-          <label for="password">Mot de passe</label>
-        </div>
-        <button type="submit" class="login-button">Se connecter</button>
-      </form>
-    </div>
-    <FooterComponent />
-  </div>
-</template>
-
 <script lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
+import { mapState, mapActions } from 'pinia'
+import { useUserStore } from '@/store/user'
+
 
 export default {
   components: {
     HeaderComponent,
     FooterComponent
   },
+  computed: {
+    ...mapState(useUserStore, ['user'])
+  },
+  data() {
+    return {
+      mail: "",
+      password: "",
+      errorMessage: null
+    }
+  },
   methods: {
-    onSubmit() {
-      console.log('Formulaire soumis !')
+    ...mapActions(useUserStore, ['loginUser']),
+    connection() {
+      console.log('Connexion !')
+      this.$api.post('/login', {
+        mail: this.mail,
+        password: this.password
+      }).then(resp => {
+        //console.log( "data dans login ", resp.data)
+        this.loginUser(resp.data.profileId, resp.data.refreshToken, resp.data.accessToken)
+        //console.log( "pinia dans login  ", this.user)
+        this.$router.push('/')
+      }).catch(err => {
+        console.log(err)
+        this.errorMessage = err.response.data.message
+      })
     }
   }
 }
 </script>
 
-<style scoped>
+<template>
+  <div class="login-page">
+    <HeaderComponent />
+    <div class="login-container">
+      <form class="login-form" @submit.prevent="onSubmit">
+        <h2>Connexion</h2>
+        <div v-if="errorMessage" class="error">{{errorMessage}}</div>
+
+        <div class="form-group">
+          <input v-model="mail" type="email" id="email" placeholder=" " required />
+          <label for="email">Email</label>
+        </div>
+        <div class="form-group">
+          <input v-model="password" type="password" id="password" placeholder=" " required />
+          <label for="password">Mot de passe</label>
+        </div>
+        <button @click="connection()" class="login-button">Se connecter</button>
+        <div class="register"><RouterLink to="/inscription">Pas encore de compte ? Inscrivez-vous</RouterLink></div>
+      </form>
+    </div>
+    <FooterComponent />
+  </div>
+</template>
+
+<style scoped lang="scss">
+
+.error {
+  color: black;
+  background-color: lighten(red, 30%);
+  padding: 1em;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 2em;
+}
+.register {
+  font-size: .8em;
+  text-align: center;
+  color: grey;
+  text-decoration: underline;
+}
+
+h2,
+label {
+  color: #333 !important;
+}
 .form-group {
   position: relative;
   margin-bottom: 20px;
@@ -57,7 +106,7 @@ export default {
   position: absolute;
   top: 12px;
   left: 10px;
-  color: #999;
+  color: #000000;
   transition: all 0.2s ease;
   background-color: white;
   padding: 0 5px;
